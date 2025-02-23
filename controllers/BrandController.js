@@ -82,17 +82,20 @@ export async function deleteBrand(req, res) {
 export async function updateBrand(req, res) {
   const { id } = req.params;
   const { name } = req.body;
-  const existingBrand = await db.Brand.findOne({
-    where: {
-      name,
-      id: { [Op.ne]: id },
-    },
-  });
-
-  if (existingBrand) {
-    return res.status(409).json({
-      message: "Tên thương hiệu đã tồn tại vui lòng chọn tên thương hiệu khác",
+  if (name !== undefined) {
+    const existingBrand = await db.Brand.findOne({
+      where: {
+        name,
+        id: { [Op.ne]: id },
+      },
     });
+
+    if (existingBrand) {
+      return res.status(409).json({
+        message:
+          "Tên thương hiệu đã tồn tại vui lòng chọn tên thương hiệu khác",
+      });
+    }
   }
   const updatedBrand = await db.Brand.update(req.body, {
     where: { id },

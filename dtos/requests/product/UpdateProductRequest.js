@@ -19,7 +19,7 @@ class UpdateProductRequest{
           name: Joi.string().optional(),
           price: Joi.number().positive().optional(),
           oldprice: Joi.number().positive().optional(),
-          image: Joi.string().uri().allow("").optional(),
+          image: Joi.string().allow("").optional(),
           description: Joi.string().optional(),
           specification: Joi.string().optional(),
           buyturn: Joi.number().integer().min(0).optional(),

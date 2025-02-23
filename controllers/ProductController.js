@@ -38,7 +38,9 @@ export async function getProducts(req, res) {
 
 export async function getProductById(req, res) {
   const { id } = req.params;
-  const product = await db.Product.findByPk(id);
+  const product = await db.Product.findByPk(id, {
+      include:[{ model: db.ProductImage, as: "product_images"}],
+  });
   console.log(product);
   if (!product) {
     return res.status(404).json({
@@ -52,13 +54,6 @@ export async function getProductById(req, res) {
 }
 
 export async function insertProducts(req, res) {
-  const { error } = InsertProductRequest.validate(req.body);
-  if (error) {
-    return res.status(400).json({
-      message: "Lỗi khi thêm sản phẩm",
-      error: error.details[0]?.message,
-    });
-  }
   // Kiểm tra xem sản phẩm đã tồn tại chưa
   const existingName = await db.Product.findOne({
     where: { name: req.body.name },
@@ -94,28 +89,29 @@ export async function deleteProducts(req, res) {
 export async function updateProducts(req, res) {
   const { id } = req.params;
   const { name } = req.body;
+  if (name !== undefined) {
     const existingProduct = await db.Product.findOne({
       where: {
         name,
         id: { [Op.ne]: id },
       },
     });
-  
-        if (existingProduct) {
-          return res.status(409).json({
-            message: "Tên sản phẩm đã tồn tại vui lòng chọn tên sản phẩm khác",
-          });
-        }
+    if (existingProduct) {
+      return res.status(409).json({
+        message: "Tên sản phẩm đã tồn tại vui lòng chọn tên sản phẩm khác",
+      });
+    }
+  }
   const updatedProduct = await db.Product.update(req.body, {
     where: { id },
   });
   if (updatedProduct) {
-    res.status(200).json({
+    return res.status(200).json({
       message: "update sản phẩm thành công",
     });
   }
   {
-    res.status(200).json({
+    return res.status(200).json({
       message: "Sản phẩm không tìm thấy",
     });
   }

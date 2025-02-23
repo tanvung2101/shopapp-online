@@ -12,6 +12,9 @@ import * as NewsDetailController from "./controllers/NewsDetailController";
 import * as BannerController from "./controllers/BannerController";
 import * as BannerDetailController from "./controllers/BannerDetailController";
 import * as ImageController from "./controllers/ImageController";
+import * as ProductImageController from "./controllers/ProductImageController";
+import * as CartController from "./controllers/CartController";
+import * as CartItemController from "./controllers/CartItemController";
 import asyncHandler from "./middlewares/asyncHandler";
 import validate from "./middlewares/validate";
 import InsertProductRequest from "./dtos/requests/product/InsertProductRequest";
@@ -25,7 +28,10 @@ import InsertBannerRequest from "./dtos/requests/banner/InsertBannerRequest";
 import InsertBannerDetailRequest from "./dtos/requests/banner_detail/InsertBannerDetailsRequest";
 import uploadImageMiddleware from "./middlewares/imageUpload";
 import validateImageExists from "./middlewares/validateImageExists";
-import uploadGoogleImageMiddleware from "./middlewares/imageGoogleUpload"
+import uploadGoogleImageMiddleware from "./middlewares/imageGoogleUpload";
+import InsertProductImageRequest from "./dtos/requests/product_image/InsertProductImageRequest";
+import InsertCartRequest from "./dtos/cart/InsertCartRequest";
+import InsertCartItemRequest from "./dtos/cart_item/InsertCartItemRequest";
 
 export function AppRoute(app) {
   // Users Routes
@@ -44,12 +50,32 @@ export function AppRoute(app) {
     asyncHandler(ProductController.insertProducts)
   );
   router.put(
-    "/products",
+    "/products/:id",
     validateImageExists,
-    validate(validate(UpdateProductRequest)),
+    validate(UpdateProductRequest),
     asyncHandler(ProductController.updateProducts)
   );
   router.delete("/product/:id", asyncHandler(ProductController.deleteProducts));
+
+  // ProductImage Router
+  router.get(
+    "/product-images",
+    asyncHandler(ProductImageController.getProductImages)
+  );
+  router.get(
+    "/product-images/:id",
+    asyncHandler(ProductImageController.getProductImageById)
+  );
+  router.post(
+    "/product-images",
+    validate(InsertProductImageRequest),
+    asyncHandler(ProductImageController.insertProductImage)
+  );
+
+  router.delete(
+    "/product-images/:id",
+    asyncHandler(ProductImageController.deleteCategory)
+  );
 
   // Category Routes
   router.get("/categories", asyncHandler(CategoryController.getCategories));
@@ -57,8 +83,16 @@ export function AppRoute(app) {
     "/categories/:id",
     asyncHandler(CategoryController.getCategoryById)
   );
-  router.post("/categories",validateImageExists, asyncHandler(CategoryController.insertCategory));
-  router.put("/categories/:id",validateImageExists, asyncHandler(CategoryController.updateCategory));
+  router.post(
+    "/categories",
+    validateImageExists,
+    asyncHandler(CategoryController.insertCategory)
+  );
+  router.put(
+    "/categories/:id",
+    validateImageExists,
+    asyncHandler(CategoryController.updateCategory)
+  );
   router.delete(
     "/categories/:id",
     asyncHandler(CategoryController.deleteCategory)
@@ -67,8 +101,16 @@ export function AppRoute(app) {
   // Brand Routes
   router.get("/brands", asyncHandler(BrandController.getBrands));
   router.get("/brands/:id", asyncHandler(BrandController.getBrandById));
-  router.post("/brands",validateImageExists, asyncHandler(BrandController.insertBrand));
-  router.put("/brands",validateImageExists, asyncHandler(BrandController.updateBrand));
+  router.post(
+    "/brands",
+    validateImageExists,
+    asyncHandler(BrandController.insertBrand)
+  );
+  router.put(
+    "/brands/:id",
+    validateImageExists,
+    asyncHandler(BrandController.updateBrand)
+  );
   router.delete("/brands/:id", asyncHandler(BrandController.deleteBrand));
 
   // Order Routes
@@ -104,6 +146,42 @@ export function AppRoute(app) {
     asyncHandler(OrderDetailController.deleteOrderDetail)
   );
 
+  // Cart Router
+  router.get("/carts", asyncHandler(CartController.getCarts));
+  router.get("/carts/:id", asyncHandler(CartController.getCartById));
+  router.post(
+    "/carts",
+    validate(InsertCartRequest),
+    asyncHandler(CartController.insertCart)
+  );
+  router.post(
+    "/carts/checkout",
+    asyncHandler(CartController.checkoutCart)
+  );
+  router.delete("/carts/:id", asyncHandler(CartController.deleteCart));
+
+  // CartItem Router
+
+  router.get("/cart-items", asyncHandler(CartItemController.getCartItems));
+  router.get("/cart-items/carts/:cart_id", asyncHandler(CartItemController.getCartItemByCartId));
+  router.get(
+    "/cart-items/:id",
+    asyncHandler(CartItemController.getCartItemById)
+  );
+  router.post(
+    "/cart-items",
+    validate(InsertCartItemRequest),
+    asyncHandler(CartItemController.insertCartItems)
+  );
+  // router.put(
+  //   "/carts/:id",
+  //   asyncHandler(CartController.)
+  // );
+  router.delete(
+    "/cart-items/:id",
+    asyncHandler(CartItemController.deleteCartItem)
+  );
+
   // News Routes
   router.get("/news", asyncHandler(NewsController.getNews));
   router.get("/news/:id", asyncHandler(NewsController.getNewsArticleById));
@@ -113,7 +191,11 @@ export function AppRoute(app) {
     validate(InsertNewsRequest),
     asyncHandler(NewsController.insertNewsArticle)
   );
-  router.put("/news/:id",validateImageExists, asyncHandler(NewsController.updateNewsArticle));
+  router.put(
+    "/news/:id",
+    validateImageExists,
+    asyncHandler(NewsController.updateNewsArticle)
+  );
   router.delete(
     "/news/:id",
     validate(UpdateNewsRequest),
@@ -182,6 +264,7 @@ export function AppRoute(app) {
     asyncHandler(BannerDetailController.deleteBannerDetail)
   );
 
+  // Image Router
   router.post(
     "/images/upload",
     uploadImageMiddleware.array("images", 5),
@@ -197,10 +280,7 @@ export function AppRoute(app) {
     uploadImageMiddleware.array("images", 5),
     ImageController.viewImages
   );
-  router.delete(
-    "/images/delete",
-    (ImageController.deleteImage)
-  );
+  router.delete("/images/delete", ImageController.deleteImage);
 
   app.use("/api/", router);
 }

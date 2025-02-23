@@ -78,19 +78,20 @@ export async function deleteBanner(req, res) {
 
 export async function updateBanner(req, res) {
   const { id } = req.params;
-  const existingBanner = await db.Banner.findOne({
+  const { name } = req.body;
+  if (name !== undefined) {
+    const existingBanner = await db.Banner.findOne({
       where: {
-        name:req.body.name,
-        id: { [Op.ne]: id }
-      }
-    })
-
+        name,
+        id: { [Op.ne]: id },
+      },
+    });
     if (existingBanner) {
       return res.status(409).json({
-        message:
-          "Tên banner đã tồn tại vui lòng chọn tên banner khác",
+        message: "Tên banner đã tồn tại vui lòng chọn tên banner khác",
       });
     }
+  }
   const updatedBanner = await db.Banner.update(req.body, { where: { id } });
 
   if (updatedBanner) {

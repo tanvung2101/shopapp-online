@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsTo(models.Category, {
         foreignKey: "category_id",
       });
+      Product.hasMany(models.CartItem, {
+        foreignKey: "product_id",
+      });
       Product.hasMany(models.BannerDetail, {
         foreignKey: "product_id",
       });
@@ -25,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       });
       Product.hasMany(models.Feedback, {
         foreignKey: "user_id",
+      });
+      Product.hasMany(models.ProductImage, {
+        foreignKey: "product_id",
+        as: "product_images",
       });
     }
   }
@@ -47,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
           min: 0,
         },
       },
+      // image lưu ảnh đại diện
       image: DataTypes.TEXT,
       description: DataTypes.TEXT,
       specification: DataTypes.TEXT,

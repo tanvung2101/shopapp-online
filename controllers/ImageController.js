@@ -94,6 +94,7 @@ export async function viewImages(req, res) {
   const { fileName } = req.params;
   const imagePath = path.join(path.join(__dirname, "../uploads/"), fileName);
   // Check if the files exists
+  console.log(imagePath)
   fs.access(imagePath, fs.constants.F_OK, (err) => {
     if (err) {
       return res.status(404).send("Image not found");

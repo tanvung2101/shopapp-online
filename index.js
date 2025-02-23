@@ -10,7 +10,14 @@ npx sequelize-cli model:generate --name OrderDetail --attributes order_id:intege
 npx sequelize-cli model:generate --name BannerDetail --attributes product_id:integer,banner_id:integer
 npx sequelize-cli model:generate --name Feedback --attributes product_id:integer,user_id:integer,star:integer,content:text
 npx sequelize-cli model:generate --name NewsDetail --attributes product_id:integer,new_id:integer
- npx sequelize-cli db:migrate
+npx sequelize-cli model:generate --name ProductImage --attributes product_id:integer,image_url:text
+npx sequelize-cli model:generate --name Cart --attributes session_id:string,user_id:integer
+npx sequelize-cli model:generate --name CartItem --attributes cart_id:integer,product_id:integer,quantity:integer
+npx sequelize-cli migration:generate --name add_session_to_orders
+npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate:undo
+
+alter table shopapp_online.orders modify user_id int null;
  */
 import express from 'express'
 import dotenv from 'dotenv'

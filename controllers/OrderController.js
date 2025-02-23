@@ -7,8 +7,23 @@ export async function getOrders(req, res) {
 }
 
 export async function getOrderById(req, res) {
-  res.status(200).json({
+  const { id } = req.params;
+  const order = await db.Order.findByPk(id, {
+    include: [
+      {
+        model: db.OrderDetail,
+        as: "order_details",
+      },
+    ],
+  });
+  if (!order) {
+    return res.status(404).json({
+      message: "Đơn hàng không tìm thấy",
+    });
+  }
+  return res.status(200).json({
     message: "Lấy thông tin đơn hàng thành công",
+    data: order
   });
 }
 
