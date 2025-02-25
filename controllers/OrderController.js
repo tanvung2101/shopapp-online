@@ -1,8 +1,39 @@
+import { OrderStatus } from "../constants";
 import db from "../models";
+import { Sequelize, Op, where } from "sequelize";
 
 export async function getOrders(req, res) {
-  res.status(200).json({
-    message: "Lấy danh sách đơn hàng",
+  const { search = "", page = 1, status } = req.query;
+  const pageSize = 10; // Number of items per page
+  const offset = (page - 1) * pageSize;
+  let whereClause = {};
+  if (search.trim() !== "") {
+    whereClause = {
+      [Op.or]: [{ note: { [Op.like]: `%${search}%` } }],
+    };
+  }
+console.log("haha",db.Order)
+  if (status) {
+    whereClause.status = status;
+  }
+
+  const [orders, totalOrder] = await Promise.all([
+    db.Order.findAll({
+      where: whereClause,
+      limit: pageSize,
+      offset: offset,
+      // order: [["created_at", "DESC"]],
+    }),
+    db.Order.count({
+      where: whereClause,
+    }),
+  ]);
+  return res.status(200).json({
+    message: "Lấy danh sách đơn hàng thành công",
+    data: orders,
+    currentPage: parseInt(page, 10),
+    totalPages: Math.ceil(totalOrder / pageSize),
+    totalOrder,
   });
 }
 
@@ -52,10 +83,10 @@ export async function insertOrder(req, res) {
 
 export async function deleteOrder(req, res) {
   const { id } = req.params;
-  const deleted = await db.Order.destroy({
+  const updated = await db.Order.update({status: OrderStatus.Failed},{
     where: { id },
   });
-  if (deleted) {
+  if (updated) {
     res.status(200).json({
       message: "xoá đơn hàng thành công",
     });

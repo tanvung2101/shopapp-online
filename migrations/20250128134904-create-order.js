@@ -23,8 +23,17 @@ module.exports = {
       note: {
         type: Sequelize.TEXT
       },
+      phone: {
+        type: Sequelize.TEXT
+      },
+      address: {
+        type: Sequelize.TEXT
+      },
       total: {
         type: Sequelize.INTEGER
+      },
+      session_id: {
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,

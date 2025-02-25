@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       role: DataTypes.INTEGER,
       avatar: DataTypes.STRING,
       phone: DataTypes.INTEGER,
+      is_locked: DataTypes.INTEGER,
       created_at: {
         type: DataTypes.DATE,
         defaultValue: new Date(),

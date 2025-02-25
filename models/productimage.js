@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       image_url: {
         type: DataTypes.TEXT,
         allowNull: true,
-        unique: true
+        // unique: true
       },
     },
     {

@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Order extends Model {
@@ -28,7 +28,13 @@ module.exports = (sequelize, DataTypes) => {
         comment: "1: Pending, 2: Processing, 3: Shipped, 4: Delivered, 5: Cancelled, 6: Refunded, 7:Failed",
       },
       note: DataTypes.TEXT,
+      phone: DataTypes.TEXT,
+      address: DataTypes.TEXT,
       total: DataTypes.INTEGER,
+      session_id: {
+        type: DataTypes.STRING,
+        // unique: true
+      }
     },
     {
       sequelize,
