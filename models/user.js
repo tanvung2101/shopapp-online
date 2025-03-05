@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       avatar: DataTypes.STRING,
       phone: DataTypes.INTEGER,
       is_locked: DataTypes.INTEGER,
+      password_changed_at: DataTypes.DATE,
       created_at: {
         type: DataTypes.DATE,
         defaultValue: new Date(),
@@ -40,6 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Users",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
   return User;

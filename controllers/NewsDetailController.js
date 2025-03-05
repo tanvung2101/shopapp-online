@@ -17,9 +17,9 @@ export async function getNewsDetails(req, res) {
   return res.status(200).json({
     message: "Lấy danh sách tin tức chi tiêt thành công",
     data: newsDetails,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalNewsDetails / pageSize),
-    totalNewsDetails,
+    current_page: parseInt(page, 10),
+    total_pages: Math.ceil(totalNewsDetails / pageSize),
+    total:totalNewsDetails,
   });
 }
 

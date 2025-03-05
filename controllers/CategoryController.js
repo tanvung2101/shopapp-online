@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
 import db from "../models";
+import { getAvatarUrl } from "../helpers/imageHelper";
 
 export async function getCategories(req, res) {
   const { search = "", page = 1 } = req.query;
@@ -27,10 +28,13 @@ export async function getCategories(req, res) {
   ]);
   return res.status(200).json({
     message: "Lấy danh sách danh mục thành công",
-    data: categories,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalCategories / pageSize),
-    totalCategories,
+    data: categories.map((category) => ({
+      ...category.get({ plain: true }),
+      image: getAvatarUrl(category.image),
+    })),
+    current_age: parseInt(page, 10),
+    total_pages: Math.ceil(totalCategories / pageSize),
+    total:totalCategories,
   });
 }
 
@@ -44,7 +48,10 @@ export async function getCategoryById(req, res) {
   }
   res.status(200).json({
     message: "Lấy thông tin danh mục",
-    data: category,
+    data: {
+      ...category.get({ plain: true }),
+      image: getAvatarUrl(category.image),
+    },
   });
 }
 
@@ -52,7 +59,10 @@ export async function insertCategory(req, res) {
   const category = await db.Category.create(req.body);
   res.status(201).json({
     message: "Thêm mới danh mục thành công",
-    data: category,
+    data: {
+      ...category.get({ plain: true }),
+      image: getAvatarUrl(category.image),
+    },
   });
 }
 

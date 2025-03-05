@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        unique: true
+        unique: true,
       },
     },
     {
@@ -34,6 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "carts",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
   return Cart;

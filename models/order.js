@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       user_id: DataTypes.INTEGER,
       status: {
         type: DataTypes.INTEGER,
-        comment: "1: Pending, 2: Processing, 3: Shipped, 4: Delivered, 5: Cancelled, 6: Refunded, 7:Failed",
+        comment:
+          "1: Pending, 2: Processing, 3: Shipped, 4: Delivered, 5: Cancelled, 6: Refunded, 7:Failed",
       },
       note: DataTypes.TEXT,
       phone: DataTypes.TEXT,
@@ -34,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       session_id: {
         type: DataTypes.STRING,
         // unique: true
-      }
+      },
     },
     {
       sequelize,
@@ -42,6 +43,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "orders",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
   return Order;

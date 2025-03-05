@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         as: "product_images",
       });
+      Product.hasMany(models.ProductAttributeValue, {
+        foreignKey: "product_id",
+        as: "attributes",
+      });
     }
   }
   Product.init(
@@ -74,6 +78,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Products",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
   return Product;

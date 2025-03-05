@@ -34,7 +34,11 @@ module.exports = {
       },
       is_locked: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
+      },
+      password_changed_at: {
+        type: Sequelize.DATE,
+
       },
       created_at: {
         allowNull: false,

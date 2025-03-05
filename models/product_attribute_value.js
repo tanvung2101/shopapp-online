@@ -1,40 +1,38 @@
 'use strict';
 const {
-  Model,
+  Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class NewsDetail extends Model {
+  class ProductAttributeValue extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      NewsDetail.belongsTo(models.News, {
-        foreignKey: "news_id",
-      }),
-        NewsDetail.belongsTo(models.Product, {
+      ProductAttributeValue.belongsTo(models.Product, {
         foreignKey: "product_id",
-      })
+      });
+      ProductAttributeValue.belongsTo(models.Attribute, {
+        foreignKey: "attribute_id",
+      });
     }
   }
-  NewsDetail.init(
+  ProductAttributeValue.init(
     {
       product_id: DataTypes.INTEGER,
-      news_id: DataTypes.INTEGER,
+      attribute_id: DataTypes.INTEGER,
+      value: DataTypes.TEXT, // giá trị của thuộc tính ví dụ intel17  16G, đỏ
     },
     {
       sequelize,
-      modelName: "NewsDetail",
-      tableName: "news_details",
+      modelName: "ProductAttributeValue",
+      tableName: 'product_attribute_values',
       timestamps: true,
       underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
   );
-  return NewsDetail;
+  return ProductAttributeValue;
 };
-
-// console.log(sequelize.models.NewsDetail);

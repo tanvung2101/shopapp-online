@@ -31,9 +31,9 @@ console.log("haha",db.Order)
   return res.status(200).json({
     message: "Lấy danh sách đơn hàng thành công",
     data: orders,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalOrder / pageSize),
-    totalOrder,
+    current_page: parseInt(page, 10),
+    total_pages: Math.ceil(totalOrder / pageSize),
+    total:totalOrder,
   });
 }
 

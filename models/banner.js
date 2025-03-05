@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Banner.init(
     {
-      name: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
       image: DataTypes.TEXT,
       status: DataTypes.INTEGER,
     },
@@ -28,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "banners",
       timestamps: true,
       underscored: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
   return Banner;

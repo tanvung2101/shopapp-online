@@ -28,10 +28,13 @@ export async function getNews(req, res) {
 
   return res.status(200).json({
     message: "Lấy danh sách tin tức thành công",
-    data: news,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalNews / pageSize),
-    totalNews,
+    data: news.map((item) => ({
+      ...item.get({ plain: true }),
+      image: getAvatarUrl(item.image),
+    })),
+    current_page: parseInt(page, 10),
+    total_pages: Math.ceil(totalNews / pageSize),
+    total:totalNews,
   });
 }
 
@@ -45,7 +48,10 @@ export async function getNewsArticleById(req, res) {
   }
   res.status(200).json({
     message: "Lấy thông tin tin tức",
-    data: news,
+    data: {
+      ...news.get({ plain: true }),
+      image: getAvatarUrl(news.image),
+    },
   });
 }
 
@@ -84,7 +90,10 @@ export async function insertNewsArticle(req, res) {
 
     res.status(201).json({
       message: "Thêm mới bài báo thành công",
-      data: newsArticle,
+      data: {
+        ...newsArticle.get({ plain: true }),
+        image: getAvatarUrl(newsArticle.image),
+      },
     });
   } catch (error) {
     await transaction.rollback();

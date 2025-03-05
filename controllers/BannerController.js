@@ -1,6 +1,7 @@
 import { Op, where } from "sequelize";
 import db from "../models";
 import { BannerStatus } from "../constants";
+import { getAvatarUrl } from "../helpers/imageHelper";
 
 export async function getBanners(req, res) {
   const { search = "", page = 1 } = req.query;
@@ -27,10 +28,13 @@ export async function getBanners(req, res) {
 
   return res.status(200).json({
     message: "Lấy danh sách banner thành công",
-    data: banners,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalBanners / pageSize),
-    totalBanners,
+    data: banners.map(banner => ({
+      ...banner.get({ plain: true }),
+      image: getAvatarUrl(banner.image)
+    })),
+    current_page: parseInt(page, 10),
+    total_pages: Math.ceil(totalBanners / pageSize),
+    total:totalBanners,
   });
 }
 
@@ -42,15 +46,19 @@ export async function getBannerById(req, res) {
   }
   res.status(200).json({
     message: "Lấy thông tin banner",
-    data: banner,
+    data: {
+      ...banner.get({ plain: true }),
+      image: getAvatarUrl(banner.image),
+    },
   });
 }
 
 export async function insertBanner(req, res) {
   const { name } = req.body;
-  const existingBanner = db.Banner.findOne({ where: { name: name.trim() } });
+  const existingBanner = await db.Banner.findOne({ where: { name: name.trim() } });
+  console.log(existingBanner)
   if (existingBanner) {
-    return res.status(201).json({
+    return res.status(409).json({
       message: "Tên banner đã tồn tại vui lòng chọn tên khác",
     });
   }
