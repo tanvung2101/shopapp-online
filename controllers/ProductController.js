@@ -4,10 +4,22 @@ import { getAvatarUrl } from "../helpers/imageHelper";
 
 
 export async function getProducts(req, res) {
-  const { search = "", page = 1 } = req.query;
-  const pageSize = 10; // Number of items per page
+  const {
+    search = "",
+    page = 1,
+    category,
+    brand,
+    sort_price,
+    price_max ,
+    price_min ,
+  } = req.query;
+  console.log('sss', req.query)
+  const pageSize = 10;
   const offset = (page - 1) * pageSize;
   let whereClause = {};
+  let orderClause = [];
+
+  // 🔍 Tìm kiếm theo tên, mô tả, thông số kỹ thuật
   if (search.trim() !== "") {
     whereClause = {
       [Op.or]: [
@@ -18,31 +30,59 @@ export async function getProducts(req, res) {
     };
   }
 
-  // Khởi tạo whereClause cho thuộc tính động
-  let attributeWhereClause = {};
-  if (search.trim() !== "") {
-    attributeWhereClause = { value: { [Op.like]: `%${search}%` } }
+  // 🔥 Lọc theo `category` (trên URL) -> `category_id` (trong database)
+  if (category) {
+    whereClause.category_id = category; // Giữ nguyên giá trị từ URL
   }
-console.log(attributeWhereClause)
+
+  // 🔥 Lọc theo `brand` (trên URL) -> `brand_id` (trong database)
+  if (brand) {
+    whereClause.brand_id = brand; // Giữ nguyên giá trị từ URL
+  }
+
+  const minPrice = price_min && !isNaN(price_min) ? Number(price_min) : null;
+  const maxPrice = price_max && !isNaN(price_max) ? Number(price_max) : null;
+
+  if (minPrice !== null || maxPrice !== null) {
+    whereClause.price = {};
+    if (minPrice !== null) {
+      whereClause.price[Op.gte] = minPrice;
+    }
+    if (maxPrice !== null) {
+      whereClause.price[Op.lte] = maxPrice;
+    }
+  }
+
+  // 🔥 Sắp xếp theo giá
+  if (sort_price === "asc") {
+    orderClause.push(["price", "ASC"]);
+  } else if (sort_price === "desc") {
+    orderClause.push(["price", "DESC"]);
+  }
+  console.log("whereClause",whereClause)
+
   const [products, totalProducts] = await Promise.all([
     db.Product.findAll({
       where: whereClause,
       include: [
         {
-          model: db.ProductAttributeValue,
-          as: "attributes",
-          include: [{ model: db.Attribute }],
-          where: attributeWhereClause,
-          required: false
+          model: db.Category,
+          as: "Category",
+        },
+        {
+          model: db.Brand, // 🔥 Thêm bảng Brand để lấy thông tin thương hiệu
+          as: "Brand",
         },
       ],
       limit: pageSize,
       offset: offset,
+      order: orderClause,
     }),
     db.Product.count({
       where: whereClause,
     }),
   ]);
+
   return res.status(200).json({
     message: "Lấy danh sách sản phẩm thành công",
     data: products.map((product) => ({
@@ -51,7 +91,7 @@ console.log(attributeWhereClause)
     })),
     current_page: parseInt(page, 10),
     total_pages: Math.ceil(totalProducts / pageSize),
-    total:totalProducts,
+    total: totalProducts,
   });
 }
 
@@ -178,7 +218,7 @@ export async function updateProducts(req, res) {
       });
 
       if (productAttributeValue) {
-        await productAttributeValue.update({value: attr.value})
+         await productAttributeValue.update({value: attr.value})
       } else {
         await db.ProductAttributeValue.create({
           product_id: id,

@@ -16,7 +16,7 @@ import * as ProductImageController from "./controllers/ProductImageController";
 import * as CartController from "./controllers/CartController";
 import * as CartItemController from "./controllers/CartItemController";
 import asyncHandler from "./middlewares/asyncHandler";
-import validate from "./middlewares/validate";
+import validate, { emailValidator } from "./middlewares/validate";
 import InsertProductRequest from "./dtos/requests/product/InsertProductRequest";
 import UpdateProductRequest from "./dtos/requests/product/UpdateProductRequest";
 import InsertUserRequest from "./dtos/requests/users/InsertUserRequest";
@@ -36,6 +36,8 @@ import InsertCartItemRequest from "./dtos/cart_item/InsertCartItemRequest";
 import UpdateOrderRequest from "./dtos/requests/order/UpdateOrderRequest";
 import { requireRoles } from "./middlewares/jwtMiddlewares";
 import { UserRole } from "./constants";
+import { verifyForgotPasswordToken } from "./helpers/jwt";
+import ImageUploadS3 from "./helpers/s3";
 
 
 
@@ -59,11 +61,18 @@ export function AppRoute(app) {
   );
 
   router.get(
-    "/users/me/ :id",
+    "/users/me/:id",
     requireRoles([UserRole.ADMIN, UserRole.USER]),
     asyncHandler(UserController.getUserById)
   );
 
+  router.get("/users/refresh-token", UserController.getRefreshToken);
+  router.post("/users/forgot-password",emailValidator, UserController.forgotPassword);
+  router.post(
+    "/users/rest-password",
+    verifyForgotPasswordToken,
+    UserController.restPassword
+  );
 
   // Product Routes
   router.get("/products", asyncHandler(ProductController.getProducts));
@@ -227,7 +236,7 @@ export function AppRoute(app) {
   );
   router.post(
     "/cart-items",
-    requireRoles([UserRole.USER]),
+    requireRoles([UserRole.USER, UserRole.ADMIN]),
     validate(InsertCartItemRequest),
     asyncHandler(CartItemController.insertCartItems)
   );
@@ -264,6 +273,7 @@ export function AppRoute(app) {
     validate(UpdateNewsRequest),
     asyncHandler(NewsController.deleteNewsArticle)
   );
+
 
   // NewsDetails Routes
   router.get(
@@ -361,6 +371,18 @@ export function AppRoute(app) {
     "/images/delete",
     requireRoles([UserRole.ADMIN, UserRole.USER]),
     ImageController.deleteImage
+  );
+
+    router.post(
+      "/images/upload/aws",
+      ImageUploadS3.array("images", 5),
+      ImageController.uploadImagesS3
+  );
+
+  router.delete(
+    "/images/aws/delete",
+    // requireRoles([UserRole.ADMIN, UserRole.USER]),
+    ImageController.deleteAllFileVersions
   );
 
   app.use("/api/", router);

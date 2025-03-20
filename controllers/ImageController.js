@@ -8,13 +8,31 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import db from "../models";
+import {DeleteObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s3";
+import { s3 } from "../helpers/s3";
 
 export async function uploadImages(req, res) {
+  // console.log(req.files)
   // Kiểm tra nếu không có file nào được tải lên
   if (req.files.length === 0) {
     throw new Error("Không có file nào được tải lên");
   }
   const uploadImagesPaths = req.files.map((file) => path.basename(file.path).trim());
+  console.log(uploadImagesPaths)
+  res.status(201).json({
+    message: "Tải file ảnh thành công",
+    files: uploadImagesPaths,
+  });
+}
+
+export async function uploadImagesS3(req, res) {
+  // console.log(req.files)
+  // Kiểm tra nếu không có file nào được tải lên
+  if (req.files.length === 0) {
+    throw new Error("Không có file nào được tải lên");
+  }
+  const uploadImagesPaths = req.files.map((file) => file.location.trim());
+  console.log(uploadImagesPaths);
   res.status(201).json({
     message: "Tải file ảnh thành công",
     files: uploadImagesPaths,
@@ -102,3 +120,61 @@ export async function viewImages(req, res) {
     res.sendFile(imagePath);
   });
 }
+
+
+/**
+ * để xóa ảnh từ AWS S3
+ */
+
+export async function deleteAllFileVersions(req, res) {
+  try {
+    let { filePath } = req.body; // Truyền đường dẫn file, không phải URL đầy đủ
+
+    if (!filePath) {
+      return res
+        .status(400)
+        .json({ message: "Vui lòng cung cấp đường dẫn file cần xóa!" });
+    }
+
+    // ✅ Nếu filePath là URL, cần cắt chỉ lấy phần "uploads/xxx.png"
+    if (filePath.startsWith("http")) {
+      const urlParts = new URL(filePath);
+      filePath = urlParts.pathname.substring(1); // Cắt bỏ dấu "/" đầu tiên
+    }
+
+    console.log("Đường dẫn file cần xóa:", filePath);
+
+    // 📝 Lấy danh sách tất cả phiên bản của file
+    const params = { Bucket: "shopapp-online", Prefix: filePath };
+    const versionsData = await s3.send(new ListObjectVersionsCommand(params));
+
+    if (!versionsData.Versions || versionsData.Versions.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "File không tồn tại hoặc đã bị xóa!" });
+    }
+
+    // 🔥 Xóa tất cả phiên bản của file
+    for (const version of versionsData.Versions) {
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: "shopapp-online",
+          Key: filePath,
+          VersionId: version.VersionId,
+        })
+      );
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Ảnh đã bị xóa hoàn toàn khỏi S3!" });
+  } catch (error) {
+    console.error("Lỗi khi xoá ảnh:", error);
+    return res
+      .status(500)
+      .json({ message: "Lỗi khi xoá ảnh", error: error.message });
+  }
+}
+
+
+

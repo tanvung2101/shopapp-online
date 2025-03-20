@@ -26,24 +26,32 @@ alter table shopapp_online.orders modify user_id int null;
 alter table shopapp_online.users
 add column password_changed_at datetime null;
  */
+
+import cookieParser from "cookie-parser";
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
+import './helpers/s3'
+
 import db from './models';
 
 
 const app = express();
+const cors = require("cors");
+
+
 app.use(express.json())
 express.urlencoded({ extended: true })
+// cookie parser
+app.use(cookieParser(process.env.JWT_REFRESH_SECRET));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // Cho phép tất cả domain truy cập
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type,X-Requested-With Authorization, Accept");
-
-
   next();
 });
+app.use(cors());
 
 app.get("/health", async (req, res) => {
   try {
@@ -71,7 +79,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-const port = process?.env?.PORT ?? 3000
+const port = process?.env?.PORT ?? 5000
 app.listen(process.env.PORT, () => {
   try {
   } catch (error) {

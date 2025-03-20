@@ -1,12 +1,22 @@
-import { Sequelize, Op, where } from "sequelize";
+
 import argon2 from "argon2";
 import db from "../models";
 import ResponseUser from "../dtos/responses/user/ResponseUser";
 import { UserRole } from "../constants";
-import jwt from "jsonwebtoken";
-import os from 'os'
 import { getAvatarUrl } from "../helpers/imageHelper";
-require('dotenv').config();
+import { accessToken, authToken, forgotPasswordToken, verifyRefreshToken } from "../helpers/jwt";
+import { config } from "../config/config";
+import createHttpError from "http-errors";
+import { sendForgotPasswordEmail } from "../send-email";
+require("dotenv").config();
+
+const cookie = {
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30days=refreshExpiration
+  httpOnly: true,
+  sameSite: true,
+  signed: true,
+  secure: true,
+};
 
 export async function registerUser(req, res) {
   const { password, phone, email } = req.body;
@@ -39,8 +49,10 @@ export async function registerUser(req, res) {
   const hashedPassword = await argon2.hash(password);
   const user = await db.User.create({
     ...req.body,
-    email
-    , phone, password: hashedPassword, role: UserRole.USER
+    email,
+    phone,
+    password: hashedPassword,
+    role: UserRole.USER,
   });
   if (user) {
     return res.status(200).json({
@@ -54,9 +66,9 @@ export async function registerUser(req, res) {
   }
 }
 
-
 export async function loginUser(req, res) {
   const { email, phone, password } = req.body;
+  console.log('email',email)
 
   if (!email && !phone) {
     return res.status(400).json({
@@ -89,23 +101,24 @@ export async function loginUser(req, res) {
     });
   }
 
-  const token = jwt.sign(
-    {
-      id: user.id,
-      // role: user.role,
-      iat: Math.floor(Date.now() / 1000)
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRATION }
-  );
+  // const token = jwt.sign(
+  //   {
+  //     id: user.id,
+  //     // role: user.role,
+  //     iat: Math.floor(Date.now() / 1000)
+  //   },
+  //   process.env.JWT_SECRET,
+  //   { expiresIn: process.env.JWT_EXPIRATION }
+  // );
+  const { access_token, refresh_token } = await authToken(user.id);
+  res.cookie("refresh_token", refresh_token, cookie);
 
   return res.status(200).json({
     message: "Đăng nhập thành công",
     data: new ResponseUser(user),
-    token
+    access_token,
   });
 }
-
 
 export async function updateUser(req, res) {
   const { id } = req.params;
@@ -124,7 +137,7 @@ export async function updateUser(req, res) {
   }
 
   if (old_password && new_password) {
-    const passwordValid = await argon2.verify(user.password, old_password)
+    const passwordValid = await argon2.verify(user.password, old_password);
     if (!passwordValid) {
       return res.status(401).json({
         message: "Mật khẩu cũ không chính xác",
@@ -133,18 +146,18 @@ export async function updateUser(req, res) {
 
     user.password = await argon2.hash(new_password);
     user.password_changed_at = new Date();
-  } else if(new_password || old_password){
+  } else if (new_password || old_password) {
     return res.status(401).json({
       message: "Cần cả mật khẩu mới và mật khẩu cũ để cập nhật",
     });
   }
 
-  user.name = name || user.name
-  user.avatar = avatar || user.avatar
+  user.name = name || user.name;
+  user.avatar = avatar || user.avatar;
 
   await user.save();
 
-  user.avatar = getAvatarUrl(user.avatar)
+  user.avatar = getAvatarUrl(user.avatar);
 
   return res.status(200).json({
     message: "Cập nhật người dùng thành công",
@@ -152,18 +165,31 @@ export async function updateUser(req, res) {
   });
 }
 
+// const updateUserPasswordById = async (userId, body) => {
+//   const user = await getUserById(userId);
 
+//   if (!user) throw createError.NotFound();
+
+//   Object.assign(user, body);
+
+//   await user.save();
+
+//   return user;
+// };
+
+// 1418
 export async function getUserById(req, res) {
   const { id } = req.params;
 
-   if (req.user.id != id && req.user.role !== UserRole.ADMIN) {
-     return res.status(403).json({
-       message: "Chỉ có người dùng hoặc quản trị viên mới có quyền xem thông tin này",
-     });
-   }
+  if (req.user.id != id && req.user.role !== UserRole.ADMIN) {
+    return res.status(403).json({
+      message:
+        "Chỉ có người dùng hoặc quản trị viên mới có quyền xem thông tin này",
+    });
+  }
 
   const user = await db.User.findByPk(id, {
-    attributes: {exclude: ['password']}
+    attributes: { exclude: ["password"] },
   });
   if (!user) {
     return res.status(404).json({
@@ -171,9 +197,87 @@ export async function getUserById(req, res) {
     });
   }
 
-user.avatar = getAvatarUrl(user.avatar);
+  user.avatar = getAvatarUrl(user.avatar);
   return res.status(200).json({
     message: "Cập nhật người dùng thành công",
     data: new ResponseUser(user),
   });
 }
+
+
+export async function getRefreshToken(req, res, next) {
+  //  refreshToken
+  const refreshToken = req.signedCookies.refresh_token;
+  if (!refreshToken) return next(createHttpError.BadRequest("Please sign in."));
+
+  // verify token
+  const { id } = await verifyRefreshToken(refreshToken);
+
+  const user = await db.User.findByPk(id, {
+    attributes: { exclude: ["password"] },
+  });
+
+  if (!user) return next(createHttpError.NotFound("Not found user."));
+
+  // create access token
+  const { access_token, refresh_token } = await authToken(user.id);
+
+  // store refresh token
+  res.cookie("refresh_token", refresh_token, cookie);
+
+
+  res.send({ data: new ResponseUser(user), access_token });
+};
+
+export async function forgotPassword (req, res, next) {
+  // check email
+  const user = await db.User.findOne({
+    where: {
+      email: req.body.email,
+    },
+  });
+  if (!user) return next(createHttpError.NotFound("Email chưa được đăng kí"));
+
+  const forgot_token = await forgotPasswordToken(user.id);
+  user.reset_token_created_at = new Date();
+  await user.save();
+
+  // send email
+  // await emailService.sendEmailResetPassword(
+  //   req.body.email,
+  //   ac_token,
+  //   user.name
+  // );
+  await sendForgotPasswordEmail(user.email, forgot_token);
+  // success
+  res.send({ message: "Email đặt lại mật khẩu đã được gửi" });
+};
+
+
+export async function restPassword(req, res) {
+  const { id } = req.decoded
+  const { password } = req.body;
+  if (!password) {
+    return res.status(404).json({
+      message: "Vui lòng nhập mật khẩu",
+    });
+  }
+  const hashedPassword = await argon2.hash(password);
+  const user = await db.User.findByPk(id);
+  user.password = hashedPassword
+  user.password_changed_at = new Date();
+  user.save()
+  // if (!user) return next(createHttpError.NotFound("Email chưa được đăng kí"));
+
+  // const access_token = await accessToken(user.id);
+
+  // send email
+  // await emailService.sendEmailResetPassword(
+  //   req.body.email,
+  //   ac_token,
+  //   user.name
+  // );
+
+  // success
+  res.send({ message: "ok",  user:new ResponseUser(user),});
+};

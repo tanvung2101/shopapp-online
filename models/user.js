@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       phone: DataTypes.INTEGER,
       is_locked: DataTypes.INTEGER,
       password_changed_at: DataTypes.DATE,
+      reset_token_created_at: DataTypes.DATE,
       created_at: {
         type: DataTypes.DATE,
         defaultValue: new Date(),

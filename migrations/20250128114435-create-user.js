@@ -40,6 +40,10 @@ module.exports = {
         type: Sequelize.DATE,
 
       },
+      reset_token_created_at: {
+        type: Sequelize.DATE,
+
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
