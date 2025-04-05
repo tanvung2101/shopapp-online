@@ -8,8 +8,10 @@ class InsertProductRequest {
     this.image = data.image;
     this.description = data.description;
     this.specification = data.specification;
-    this.buyturn = data.buyturn;
-    this.quantity = data.quantity;
+    this.stock = data.stock;
+    this.rating = data.rating;
+    this.total_ratings = data.total_ratings;
+    this.total_sold = data.total_sold;
     this.brand_id = data.brand_id;
     this.category_id = data.category_id;
     this.attributes = data.attributes;
@@ -23,8 +25,15 @@ class InsertProductRequest {
       image: Joi.string().allow(""),
       description: Joi.string().optional(),
       specification: Joi.string().required(),
-      buyturn: Joi.number().integer().min(0),
-      quantity: Joi.number().integer().required(),
+      stock: Joi.number().integer().min(0).optional().messages({
+        "number.min": "Số lượng tồn kho không được âm.",
+      }),
+      rating: Joi.number().min(0).max(5).optional().messages({
+        "number.min": "Rating phải lớn hơn hoặc bằng 0.",
+        "number.max": "Rating không được lớn hơn 5.",
+      }),
+      total_ratings: Joi.number().integer().min(0).optional(),
+      total_sold: Joi.number().integer().min(0).optional(),
       brand_id: Joi.number().integer().required(),
       category_id: Joi.number().integer().required(),
       attributes: Joi.array()

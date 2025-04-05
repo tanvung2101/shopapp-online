@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -62,12 +60,25 @@ module.exports = (sequelize, DataTypes) => {
       image: DataTypes.TEXT,
       description: DataTypes.TEXT,
       specification: DataTypes.TEXT,
-      buyturn: DataTypes.INTEGER,
-      quantity: {
+      stock: {
         type: DataTypes.INTEGER,
-        validate: {
-          min: 0,
-        },
+        defaultValue: 0, // Mặc định số lượng tồn kho là 0
+        comment: "Số lượng tồn kho",
+      },
+      rating: {
+        type: DataTypes.DECIMAL(2, 1),
+        allowNull: true,
+        comment: "Đánh giá sản phẩm (0-5)",
+      },
+      total_ratings: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: "Tổng số lượt đánh giá",
+      },
+      total_sold: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        comment: "Tổng số lượng đã bán",
       },
       brand_id: DataTypes.INTEGER,
       category_id: DataTypes.INTEGER,

@@ -68,7 +68,7 @@ export async function registerUser(req, res) {
 
 export async function loginUser(req, res) {
   const { email, phone, password } = req.body;
-  console.log('email',email)
+  // console.log('email',email)
 
   if (!email && !phone) {
     return res.status(400).json({
@@ -88,6 +88,7 @@ export async function loginUser(req, res) {
 
   const user = await db.User.findOne({ where: condition });
 
+  // console.log("user",user)
   if (!user) {
     return res.status(401).json({
       message: "Tên hoặc mật khẩu không chính xác",
@@ -122,7 +123,7 @@ export async function loginUser(req, res) {
 
 export async function updateUser(req, res) {
   const { id } = req.params;
-  const { name, avatar, old_password, new_password } = req.body;
+  const { name, avatar, old_password, new_password, phone } = req.body;
 
   if (req.user.id != id) {
     return res.status(403).json({
@@ -154,6 +155,7 @@ export async function updateUser(req, res) {
 
   user.name = name || user.name;
   user.avatar = avatar || user.avatar;
+  user.phone = phone || user.phone;
 
   await user.save();
 

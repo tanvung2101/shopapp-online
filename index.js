@@ -16,6 +16,8 @@ npx sequelize-cli model:generate --name CartItem --attributes cart_id:integer,pr
 npx sequelize-cli model:generate --name CartItem --attributes cart_id:integer,product_id:integer,quantity:integer
 npx sequelize-cli model:generate --name Attribute --attributes name:string
 npx sequelize-cli model:generate --name ProductAttributeValue --attributes product_id:integer,attribute_id:integer,value:text
+npx sequelize-cli model:generate --name ProductVariantValue --attributes price:decimal(12,2),old_price:decimal(12,2),stock:integer,sku:string
+
 
 - Run migrate
 npx sequelize-cli db:migrate
@@ -45,13 +47,40 @@ express.urlencoded({ extended: true })
 // cookie parser
 app.use(cookieParser(process.env.JWT_REFRESH_SECRET));
 
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Origin",
+      "Content-Type",
+      "X-Requested-With",
+      "Authorization",
+      "Accept",
+    ],
+  })
+);
+
+// Middleware xử lý CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Cho phép tất cả domain truy cập
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, Content-Type,X-Requested-With Authorization, Accept");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, Content-Type, X-Requested-With, Authorization, Accept"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  // Trả về 200 ngay nếu request là OPTIONS (preflight request)
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
   next();
 });
-app.use(cors());
+
 
 app.get("/health", async (req, res) => {
   try {
@@ -72,6 +101,7 @@ app.get("/health", async (req, res) => {
 });
 
 
+
 import { AppRoute } from './AppRoute';
 
 AppRoute(app)
@@ -86,3 +116,5 @@ app.listen(process.env.PORT, () => {
   }
   console.log(`Example app listening on port ${process.env.PORT}`);
 });
+
+// 70 1630

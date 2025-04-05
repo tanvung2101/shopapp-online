@@ -1,7 +1,6 @@
 import { Op, where } from "sequelize";
 import db from "../models";
 
-
 export async function getCartItems(req, res) {
   const { cart_id, page = 1 } = req.query;
   const pageSize = 10;
@@ -44,23 +43,22 @@ export async function getCartItemById(req, res) {
 }
 
 export async function getCartItemByCartId(req, res) {
-  const { cart_id } = req.params
+  const { cart_id } = req.params;
   console.log("cart_id", cart_id);
 
   const cartItems = await db.CartItem.findAll({
-    where: {cart_id}
-  })
+    where: { cart_id },
+  });
 
-  return res
-    .status(200)
-    .json({
-      message: "Lấy thông tin mục giỏ hàng thành công", data: cartItems
-    });
+  return res.status(200).json({
+    message: "Lấy thông tin mục giỏ hàng thành công",
+    data: cartItems,
+  });
 }
 
 export async function insertCartItems(req, res) {
-  const { product_id, quantity, cart_id } = req.body
-  const productExits = await db.Product.findByPk(product_id)
+  const { product_id, quantity, cart_id } = req.body;
+  const productExits = await db.Product.findByPk(product_id);
   if (!productExits) {
     return res.status(404).json({
       message: "Sản phẩm không tồn tại",
@@ -74,7 +72,7 @@ export async function insertCartItems(req, res) {
     });
   }
 
-  const cartExits = await db.Cart.findByPk(cart_id)
+  const cartExits = await db.Cart.findByPk(cart_id);
   if (!cartExits) {
     return res.status(404).json({
       message: "Giỏ hàng không tồn tại",
@@ -85,9 +83,9 @@ export async function insertCartItems(req, res) {
   const existingCartItem = await db.CartItem.findOne({
     where: {
       product_id,
-      cart_id
-    }
-  })
+      cart_id,
+    },
+  });
 
   if (existingCartItem) {
     if (quantity === 0) {
@@ -96,23 +94,22 @@ export async function insertCartItems(req, res) {
         message: "Mục trong giỏ hàng đã được xoá",
       });
     } else {
-      existingCartItem.quantity = quantity;
-      await existingCartItem.save()
+      existingCartItem.quantity = quantity + existingCartItem.quantity;
+      await existingCartItem.save();
       return res.status(201).json({
         message: "Cập nhật số lượng trong giỏ hàng thành công",
-        data:existingCartItem
+        data: existingCartItem,
       });
     }
   } else {
     if (quantity > 0) {
-      const newCartItem = await db.CartItem.create(req.body)
+      const newCartItem = await db.CartItem.create(req.body);
       return res.status(201).json({
         message: "Thêm mới mục trong giỏ hàng thành công",
         data: newCartItem,
       });
     }
   }
-
 }
 
 export async function deleteCartItem(req, res) {

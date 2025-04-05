@@ -82,7 +82,7 @@ export async function insertNewsArticle(req, res) {
           { transaction }
         )
       );
-      console.log(newDetailPromises);
+      // console.log(newDetailPromises);
       await Promise.all(newDetailPromises);
     }
 

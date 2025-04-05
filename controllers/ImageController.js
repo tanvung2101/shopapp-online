@@ -12,7 +12,7 @@ import {DeleteObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s
 import { s3 } from "../helpers/s3";
 
 export async function uploadImages(req, res) {
-  // console.log(req.files)
+  console.log(req.files)
   // Kiểm tra nếu không có file nào được tải lên
   if (req.files.length === 0) {
     throw new Error("Không có file nào được tải lên");
@@ -26,7 +26,7 @@ export async function uploadImages(req, res) {
 }
 
 export async function uploadImagesS3(req, res) {
-  // console.log(req.files)
+  console.log(req.files)
   // Kiểm tra nếu không có file nào được tải lên
   if (req.files.length === 0) {
     throw new Error("Không có file nào được tải lên");

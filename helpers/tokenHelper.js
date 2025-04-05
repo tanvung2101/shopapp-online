@@ -9,11 +9,11 @@ async function getUserFromToken(req, res) {
       throw new Error("Không có token được cung cấp");
     }
     const token = authHeader.split(" ")[1];
-    console.log("token", token)
+    // console.log("token", token)
     const decoded = jwt.verify(token, JWT_SECRET);
     const user1 = await db.User.findByPk(decoded.id)
     const user = user1.get({ plain: true });
-    console.log("user" , user)
+    // console.log("user" , user)
 
     if (!user) {
       return res.status(404).json({

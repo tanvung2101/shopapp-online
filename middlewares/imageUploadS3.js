@@ -21,7 +21,7 @@ const upload = multer({
       cb(null, fileName);
     },
   }),
-  limits: { fileSize: 1024 * 1024 * 5 }, // Giới hạn 5MB
+  limits: { fileSize: 1024 * 1024 * 1 }, // Giới hạn 5MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);

@@ -2,7 +2,6 @@ import { Sequelize, Op, where } from "sequelize";
 import db from "../models";
 import { getAvatarUrl } from "../helpers/imageHelper";
 
-
 export async function getProducts(req, res) {
   const {
     search = "",
@@ -10,10 +9,9 @@ export async function getProducts(req, res) {
     category,
     brand,
     sort_price,
-    price_max ,
-    price_min ,
+    price_max,
+    price_min,
   } = req.query;
-  console.log('sss', req.query)
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
   let whereClause = {};
@@ -59,7 +57,7 @@ export async function getProducts(req, res) {
   } else if (sort_price === "desc") {
     orderClause.push(["price", "DESC"]);
   }
-  console.log("whereClause",whereClause)
+  // console.log("whereClause", whereClause);
 
   const [products, totalProducts] = await Promise.all([
     db.Product.findAll({
@@ -103,9 +101,7 @@ export async function getProductById(req, res) {
       {
         model: db.ProductAttributeValue,
         as: "attributes",
-        include: [
-          {model: db.Attribute, attributes: ["name"]}
-        ]
+        include: [{ model: db.Attribute, attributes: ["name"] }],
       },
     ],
   });
@@ -141,11 +137,11 @@ export async function insertProducts(req, res) {
       const [attribute] = await db.Attribute.findOrCreate({
         where: { name: attr.name },
       });
-        await db.ProductAttributeValue.create({
-          product_id: product.id,
-          attribute_id: attribute.id,
-          value: attr.value,
-        });
+      await db.ProductAttributeValue.create({
+        product_id: product.id,
+        attribute_id: attribute.id,
+        value: attr.value,
+      });
     }
   }
   res.status(200).json({
@@ -153,7 +149,7 @@ export async function insertProducts(req, res) {
     data: {
       ...product.get({ plain: true }),
       image: getAvatarUrl(product.image),
-      attributes
+      attributes,
     },
   });
 }
@@ -164,25 +160,28 @@ export async function deleteProducts(req, res) {
   // kiểm tra sản phẩm có trong orderDetail ko
   const orderDetailExists = await db.OrderDetail.findOne({
     where: { product_id },
-    include: [{
-      model: db.Order,
-      as: "order",
-      attributes: ["id", "status", "note", 'total', 'created_at']
-    }]
-  })
+    include: [
+      {
+        model: db.Order,
+        as: "order",
+        attributes: ["id", "status", "note", "total", "created_at"],
+      },
+    ],
+  });
 
   if (orderDetailExists) {
     return res.status(400).json({
-      message: "Không thể xoá sản phẩm vì đã có đơn hàng tham chiếu đến sản phẩm này",
+      message:
+        "Không thể xoá sản phẩm vì đã có đơn hàng tham chiếu đến sản phẩm này",
       data: {
-        order: orderDetailExists.order
-      }
+        order: orderDetailExists.order,
+      },
     });
   }
 
   await db.ProductAttributeValue.destroy({
-    where: {id}
-  })
+    where: { id },
+  });
   const deleted = await db.Product.destroy({
     where: { id },
   });
@@ -218,7 +217,7 @@ export async function updateProducts(req, res) {
       });
 
       if (productAttributeValue) {
-         await productAttributeValue.update({value: attr.value})
+        await productAttributeValue.update({ value: attr.value });
       } else {
         await db.ProductAttributeValue.create({
           product_id: id,
@@ -236,6 +235,4 @@ export async function updateProducts(req, res) {
       message: "Sản phẩm không tìm thấy",
     });
   }
-
-
 }

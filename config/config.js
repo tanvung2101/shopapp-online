@@ -1,14 +1,14 @@
-
+require("dotenv").config();
 
 module.exports = {
   development: {
-    // use_env_variable: "DATABASE_URL",
-    username: "root",
-    password: "21012001ltv",
-    database: "shopapp_online",
-    host: "127.0.0.1",
-    dialect: "mysql",
-    port: 3306,
+    username: process.env.DB_DEV_USERNAME,
+    password: process.env.DB_DEV_PASSWORD, // Use null if the environment variable is empty
+    database: process.env.DB_DEV_DATABASE,
+    port: parseInt(process.env.DB_DEV_PORT, 10),
+    host: process.env.DB_DEV_HOST,
+    dialect: process.env.DB_DEV_DIALECT,
+    use_env_variable: "DATABASE_URL",
   },
   test: {
     username: "root",
@@ -18,7 +18,7 @@ module.exports = {
     dialect: "mysql",
   },
   production: {
-    // use_env_variable: "DATABASE_URL",
+    use_env_variable: "DATABASE_URL",
     username: "root",
     password: null,
     database: "database_production",
@@ -26,5 +26,3 @@ module.exports = {
     dialect: "mysql",
   },
 };
-
-

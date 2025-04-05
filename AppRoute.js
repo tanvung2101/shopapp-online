@@ -38,8 +38,7 @@ import { requireRoles } from "./middlewares/jwtMiddlewares";
 import { UserRole } from "./constants";
 import { verifyForgotPasswordToken } from "./helpers/jwt";
 import ImageUploadS3 from "./helpers/s3";
-
-
+import { getUserFromToken } from "./helpers/tokenHelper";
 
 export function AppRoute(app) {
   // Users Routes
@@ -67,7 +66,11 @@ export function AppRoute(app) {
   );
 
   router.get("/users/refresh-token", UserController.getRefreshToken);
-  router.post("/users/forgot-password",emailValidator, UserController.forgotPassword);
+  router.post(
+    "/users/forgot-password",
+    emailValidator,
+    UserController.forgotPassword
+  );
   router.post(
     "/users/rest-password",
     verifyForgotPasswordToken,
@@ -209,16 +212,21 @@ export function AppRoute(app) {
 
   // Cart Router
   router.get("/carts", asyncHandler(CartController.getCarts));
-  router.get("/carts/:id", asyncHandler(CartController.getCartById));
+  router.get(
+    "/carts/:id",
+    requireRoles([UserRole.ADMIN, UserRole.USER]),
+    asyncHandler(CartController.getCartById)
+  );
   router.post(
     "/carts",
     requireRoles([UserRole.ADMIN]),
     validate(InsertCartRequest),
     asyncHandler(CartController.insertCart)
   );
+  router.post("/carts/checkout", asyncHandler(CartController.checkoutCart));
   router.post(
-    "/carts/checkout",
-    asyncHandler(CartController.checkoutCart)
+    "/carts/vnpay_return",
+    asyncHandler(CartController.paymentSuccess)
   );
   router.delete(
     "/carts/:id",
@@ -229,7 +237,10 @@ export function AppRoute(app) {
   // CartItem Router
 
   router.get("/cart-items", asyncHandler(CartItemController.getCartItems));
-  router.get("/cart-items/carts/:cart_id", asyncHandler(CartItemController.getCartItemByCartId));
+  router.get(
+    "/cart-items/carts/:cart_id",
+    asyncHandler(CartItemController.getCartItemByCartId)
+  );
   router.get(
     "/cart-items/:id",
     asyncHandler(CartItemController.getCartItemById)
@@ -273,7 +284,6 @@ export function AppRoute(app) {
     validate(UpdateNewsRequest),
     asyncHandler(NewsController.deleteNewsArticle)
   );
-
 
   // NewsDetails Routes
   router.get(
@@ -373,10 +383,10 @@ export function AppRoute(app) {
     ImageController.deleteImage
   );
 
-    router.post(
-      "/images/upload/aws",
-      ImageUploadS3.array("images", 5),
-      ImageController.uploadImagesS3
+  router.post(
+    "/images/upload/aws",
+    ImageUploadS3.array("images", 5),
+    ImageController.uploadImagesS3
   );
 
   router.delete(
