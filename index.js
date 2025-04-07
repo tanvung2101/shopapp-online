@@ -39,7 +39,7 @@ import models from './models/index.js';
 
 
 const app = express();
-const cors = require("cors");
+import cors from"cors";
 
 
 app.use(express.json())

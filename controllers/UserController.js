@@ -7,7 +7,9 @@ import { getAvatarUrl } from "../helpers/imageHelper.js";
 import { accessToken, authToken, forgotPasswordToken, verifyRefreshToken } from "../helpers/jwt.js";
 import createHttpError from "http-errors";
 import { sendForgotPasswordEmail } from "../send-email.js";
-require("dotenv").config();
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const cookie = {
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30days=refreshExpiration

@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 
-const { SendEmailCommand, SESClient } = require("@aws-sdk/client-ses");
-const { config } = require("dotenv");
+import { SendEmailCommand, SESClient } from"@aws-sdk/client-ses";
+import { config } from"dotenv";
 
 config();
 console.log("process.env.CLIENT_URL", process.env.CLIENT_URL);
