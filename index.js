@@ -102,7 +102,7 @@ app.get("/health", async (req, res) => {
 
 
 
-import { AppRoute } from './AppRoute';
+import { AppRoute } from './AppRoute.js';
 
 AppRoute(app)
 app.get("/", (req, res) => {
