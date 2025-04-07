@@ -26,4 +26,5 @@ jobs:
     - run: npm ci
     - name: Build the project
       run: npm run build
+    - run: pm2 restart shopapp-online
     
