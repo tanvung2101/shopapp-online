@@ -1,5 +1,5 @@
 import { getAvatarUrl } from "../helpers/imageHelper";
-import db from "../models";
+import db from "../models/index.js";
 import { Op } from "sequelize";
 
 export async function getBrands(req, res) {

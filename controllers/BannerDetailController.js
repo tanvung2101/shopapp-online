@@ -1,7 +1,5 @@
 import { Op, where } from "sequelize";
-import db from "../models";
-import path from "path";
-import fs from "fs";
+import db from "../models/index.js";
 
 export async function getBannerDetails(req, res) {
   const bannerDetails = await db.BannerDetail.findAll();

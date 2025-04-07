@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import db from "../models";
+import db from "../models/index.js";
 
 const generateToken = (payload, secretSignature, tokenLife) => {
   console.log("process.env.JWT_EXPIRATION", tokenLife);

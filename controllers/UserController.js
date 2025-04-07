@@ -1,13 +1,13 @@
 
 import argon2 from "argon2";
-import db from "../models";
-import ResponseUser from "../dtos/responses/user/ResponseUser";
-import { UserRole } from "../constants";
-import { getAvatarUrl } from "../helpers/imageHelper";
+import db from "../models/index.js";
+import ResponseUser from "../dtos/responses/user/ResponseUser.js";
+import { UserRole } from "../constants/index.js";
+import { getAvatarUrl } from "../helpers/imageHelper.js";
 import { accessToken, authToken, forgotPasswordToken, verifyRefreshToken } from "../helpers/jwt";
 import { config } from "../config/config";
 import createHttpError from "http-errors";
-import { sendForgotPasswordEmail } from "../send-email";
+import { sendForgotPasswordEmail } from "../send-email.js";
 require("dotenv").config();
 
 const cookie = {

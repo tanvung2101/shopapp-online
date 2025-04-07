@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
-import db from "../models";
-import { getAvatarUrl } from "../helpers/imageHelper";
+import db from "../models/index.js";
+import { getAvatarUrl } from "../helpers/imageHelper.js";
 
 export async function getCategories(req, res) {
   const { search = "", page = 1 } = req.query;

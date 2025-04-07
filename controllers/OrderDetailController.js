@@ -1,4 +1,4 @@
-import db from "../models";
+import db from "../models/index.js";
 
 export async function getOrderDetails(req, res) {
   const orderDetails = await db.OrderDetail.findAll()

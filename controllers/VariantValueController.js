@@ -1,8 +1,8 @@
 // VariantValueController.js
-import db from "../models";
+import db from "../models/index.js";
 import { Sequelize } from "sequelize";
 const { Op } = Sequelize;
-import { getAvatarUrl } from "../helpers/imageHelper";
+import { getAvatarUrl } from "../helpers/imageHelper.js";
 
 export const getVariantValues = async (req, res) => {
   const page = isNaN(parseInt(req.query.page)) ? 1 : parseInt(req.query.page);

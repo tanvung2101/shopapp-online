@@ -1,5 +1,5 @@
 import { Op, where } from "sequelize";
-import db from "../models";
+import db from "../models/index.js";
 
 export async function getNewsDetails(req, res) {
   const { page = 1 } = req.query;

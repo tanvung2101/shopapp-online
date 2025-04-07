@@ -1,7 +1,7 @@
 import { Op, where } from "sequelize";
-import db from "../models";
-import { BannerStatus } from "../constants";
-import { getAvatarUrl } from "../helpers/imageHelper";
+import db from "../models/index.js";
+import { BannerStatus } from "../constants/index.js";
+import { getAvatarUrl } from "../helpers/imageHelper.js";
 
 export async function getBanners(req, res) {
   const { search = "", page = 1 } = req.query;

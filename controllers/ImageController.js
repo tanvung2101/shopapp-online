@@ -7,7 +7,7 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import db from "../models";
+import db from "../models/index.js";
 import {DeleteObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s3";
 import { s3 } from "../helpers/s3";
 

@@ -1,6 +1,6 @@
 import { Op, where } from "sequelize";
-import db from "../models";
-import { OrderStatus } from "../constants";
+import db from "../models/index.js";
+import { OrderStatus } from "../constants/index.js";
 import moment from "moment";
 import querystring from "qs";
 import crypto from "crypto";

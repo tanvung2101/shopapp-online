@@ -1,4 +1,4 @@
-import db from "../models";
+import db from "../models/index.js";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 

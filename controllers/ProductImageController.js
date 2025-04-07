@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import db from "../models";
+import db from "../models/index.js";
 
 export async function getProductImages(req, res) {
   const { product_id, page = 1 } = req.query;

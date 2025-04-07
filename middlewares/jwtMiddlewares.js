@@ -1,4 +1,4 @@
-import { getUserFromToken } from "../helpers/tokenHelper";
+import { getUserFromToken } from "../helpers/tokenHelper.js";
 
 const requireRoles = (roleRequired) => async (req, res, next) => {
   try {
