@@ -33,7 +33,7 @@ import cookieParser from "cookie-parser";
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
-import './helpers/s3'
+import './helpers/s3.js'
 
 import db from './models';
 
