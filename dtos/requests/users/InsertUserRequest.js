@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { UserRole } from "../../../constants";
 
 class InsertUserRequest{
     constructor(data) {

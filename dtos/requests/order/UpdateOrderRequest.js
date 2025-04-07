@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { OrderStatus } from "../../../constants";
+import { OrderStatus } from "../../../constants/index.js";
 
 class UpdateOrderRequest {
   constructor(data) {
