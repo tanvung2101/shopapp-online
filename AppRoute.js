@@ -20,7 +20,7 @@ import validate, { emailValidator } from "./middlewares/validate.js";
 import InsertProductRequest from "./dtos/requests/product/InsertProductRequest.js";
 import UpdateProductRequest from "./dtos/requests/product/UpdateProductRequest.js";
 import InsertUserRequest from "./dtos/requests/users/InsertUserRequest.js";
-import LoginUserRequest from "./dtos/requests/users/LoginUserRequest";
+import LoginUserRequest from "./dtos/requests/users/LoginUserRequest.js";
 
 import InsertNewsRequest from "./dtos/requests/news/InsertNewsRequest.js";
 import InsertNewsDetailRequest from "./dtos/requests/newsdetail/InsertNewsDetailsRequest.js";
