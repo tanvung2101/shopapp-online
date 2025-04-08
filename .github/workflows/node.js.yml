@@ -29,15 +29,43 @@ jobs:
     - name: Build the project
       run: npm run build
 
-    - name: Create .env file
+    - name: 🔐 Create .env file
       run: |
+        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+        echo "DB_DEV_USERNAME=${{ secrets.DB_DEV_USERNAME }}" >> .env
+        echo "DB_DEV_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
+        echo "DB_DEV_DATABASE=${{ secrets.DB_DEV_DATABASE }}" >> .env
+        echo "DB_DEV_HOST=${{ secrets.DB_DEV_HOST }}" >> .env
+        echo "DB_DEV_DIALECT=${{ secrets.DB_DEV_DIALECT }}" >> .env
+        echo "DB_DEV_PORT=${{ secrets.DB_DEV_PORT }}" >> .env
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+
+        echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> .env
+        echo "FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}" >> .env
+        echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> .env
+        echo "FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}" >> .env
+        echo "FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}" >> .env
+        echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> .env
+
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+        echo "JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}" >> .env
+        echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> .env
+        echo "JWT_ACTIVATE_SECRET=${{ secrets.JWT_ACTIVATE_SECRET }}" >> .env
+        echo "JWT_RESET_PASSWORD_SECRET=${{ secrets.JWT_RESET_PASSWORD_SECRET }}" >> .env
+        echo "JWT_SECRET_FORGOT_PASSWORD_TOKEN=${{ secrets.JWT_SECRET_FORGOT_PASSWORD_TOKEN }}" >> .env
+        echo "JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }}" >> .env
+        echo "JWT_RESET_PASSWORD_EXPIRATION=${{ secrets.JWT_RESET_PASSWORD_EXPIRATION }}" >> .env
+        echo "JWT_ACTIVATE_EXPIRATION=${{ secrets.JWT_ACTIVATE_EXPIRATION }}" >> .env
+        echo "JWT_FORGOT_PASSWORD_EXPIRATION=${{ secrets.JWT_FORGOT_PASSWORD_EXPIRATION }}" >> .env
+
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-        echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> .env
-        echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> .env
         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
         echo "SES_FROM_ADDRESS=${{ secrets.SES_FROM_ADDRESS }}" >> .env
-        echo "PORT=${{ secrets.PORT }}" >> .env
+        echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> .env
+
+        echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> .env
 
 
     - name: Restart app with PM2
