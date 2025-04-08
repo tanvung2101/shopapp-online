@@ -31,37 +31,8 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "PORT=5000" >> .env
-        echo "NODE_ENV=development" >> .env
-        echo "DB_DEV_USERNAME=root" >> .env
-        echo "DB_DEV_PASSWORD=20102001ltv" >> .env
-        echo "DB_DEV_DATABASE=shopapp_online" >> .env
-        echo "DB_DEV_HOST=127.0.0.1" >> .env
-        echo "DB_DEV_DIALECT=mysql" >> .env
-        echo "DB_DEV_PORT=3306" >> .env
-        echo "DATABASE_URL=mysql://root:21012001ltv@127.0.0.1:3306/shopapp_online" >> .env
-        echo "FIREBASE_API_KEY=AIzaSyCB85aKCVp5cg2iRSpQedJY3jKOyWOwNSY" >> .env
-        echo "FIREBASE_AUTH_DOMAIN=monkey-blogging-feb92.firebaseapp.com" >> .env
-        echo "FIREBASE_PROJECT_ID=monkey-blogging-feb92" >> .env
-        echo "FIREBASE_STORAGE_BUCKET=monkey-blogging-feb92.appspot.com" >> .env
-        echo "FIREBASE_MESSAGING_SENDER_ID=858023270929" >> .env
-        echo "FIREBASE_APP_ID=1:858023270929:web:41d1519c4108c920672fb0" >> .env
-        echo "JWT_SECRET=wHRHRHVHCHĐJ22JC8DENE" >> .env
-        echo "JWT_EXPIRATION=1d" >> .env
-        echo "JWT_REFRESH_SECRET=refresh_secret" >> .env
-        echo "JWT_ACTIVATE_SECRET=activate_secret" >> .env
-        echo "JWT_RESET_PASSWORD_SECRET=reset_pass_secret" >> .env
-        echo "JWT_SECRET_FORGOT_PASSWORD_TOKEN=reset_pass_secret" >> .env
-        echo "JWT_REFRESH_EXPIRATION=30days" >> .env
-        echo "JWT_RESET_PASSWORD_EXPIRATION=10m" >> .env
-        echo "JWT_ACTIVATE_EXPIRATION=5m" >> .env
-        echo "JWT_FORGOT_PASSWORD_EXPIRATION=5m" >> .env
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-        echo "AWS_REGION='ap-southeast-1'" >> .env
-        echo "SES_FROM_ADDRESS='lientanvung@gmail.com'" >> .env
-        echo "BUCKET_NAME='shopapp-online'" >> .env
-        echo "CLIENT_URL='http://localhost:5173'" >> .env
 
 
     - name: Restart app with PM2
