@@ -1,6 +1,6 @@
 import { Sequelize, Op, where } from "sequelize";
-import db from "../models/index.js";
 import { getAvatarUrl } from "../helpers/imageHelper.js";
+import db from "../models/index.js";
 
 export async function getProducts(req, res) {
   const {
