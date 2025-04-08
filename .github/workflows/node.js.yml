@@ -34,6 +34,10 @@ jobs:
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
         echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> .env
+        echo "CLIENT_URL=${{ secrets.CLIENT_URL }}" >> .env
+        echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+        echo "SES_FROM_ADDRESS=${{ secrets.SES_FROM_ADDRESS }}" >> .env
+        echo "PORT=${{ secrets.PORT }}" >> .env
 
 
     - name: Restart app with PM2
