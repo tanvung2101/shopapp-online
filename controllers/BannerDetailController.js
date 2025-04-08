@@ -1,4 +1,4 @@
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 import db from "../models/index.js";
 
 export async function getBannerDetails(req, res) {
