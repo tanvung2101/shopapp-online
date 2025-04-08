@@ -34,6 +34,7 @@ jobs:
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
 
+
     - name: Restart app with PM2
       run: pm2 restart shopapp-online
 
