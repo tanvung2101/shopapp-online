@@ -1,4 +1,4 @@
-import { Sequelize, Op, where } from "sequelize";
+import {  Op} from "sequelize";
 import { getAvatarUrl } from "../helpers/imageHelper.js";
 import db from "../models/index.js";
 
