@@ -46,8 +46,8 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-// sequelize.sync({ alter: true }) // hoặc { force: true } để drop & tạo lại
-//   .then(() => console.log("Tables updated"))
-//   .catch(console.error);
+sequelize.sync({ alter: true }) // hoặc { force: true } để drop & tạo lại
+  .then(() => console.log("Tables updated"))
+  .catch(console.error);
 
 export default db;
