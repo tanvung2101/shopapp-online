@@ -14,7 +14,7 @@ export default {
           CLIENT_URL: process.env.CLIENT_URL,
           AWS_REGION: process.env.AWS_REGION,
           SES_FROM_ADDRESS: process.env.SES_FROM_ADDRESS,
-          PORT: process.env.PORT,
+          PORT: 5000,
           NODE_ENV: process.env.NODE_ENV
         }
       }
