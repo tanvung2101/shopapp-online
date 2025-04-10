@@ -114,7 +114,7 @@ app.listen(port, () => {
   try {
   } catch (error) {
   }
-  console.log(`Example app listening on port ${process.env.PORT}`);
+  console.log(`Example app listening on port ${port}`);
 });
 
 // 70 1630
