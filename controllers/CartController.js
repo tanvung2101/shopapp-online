@@ -30,37 +30,37 @@ function generateSecureHash(params, secret) {
 }
 
 export async function getCarts(req, res) {
-  const { session_id, user_id, page = 1 } = req.query;
-  const pageSize = 10;
-  const offset = (page - 1) * pageSize;
+  // const { session_id, user_id, page = 1 } = req.body;
+  const user_id = req.user?.id;
+  // const pageSize = 10;
+  // const offset = (page - 1) * pageSize;
 
   let whereClause = {};
-  if (session_id) whereClause.session_id = session_id;
   if (user_id) whereClause.user_id = user_id;
 
-  const [carts, totalCarts] = await Promise.all([
-    db.Cart.findAll({
-      where: whereClause,
-      include: [
-        {
-          model: db.CartItem,
-          as: "cart_items",
-        },
-      ],
-      limit: pageSize,
-      offset,
-    }),
-    db.Cart.count({
-      where: whereClause,
-    }),
-  ]);
-
+  const [carts] = await db.Cart.findAll({
+    where: whereClause,
+    include: [
+      {
+        model: db.CartItem,
+        as: "cart_items",
+        include: [
+          {
+            model: db.Product, // Thêm model Product vào để lấy thông tin sản phẩm
+            as: "product",
+          },
+        ],
+      },
+    ],
+    // limit: pageSize,
+    // offset,
+  })
   return res.status(200).json({
     message: "Lấy danh sách giỏ hàng thành công",
     data: carts,
-    current_page: parseInt(page, 10),
-    total_pages: Math.ceil(totalCarts / pageSize),
-    total: totalCarts,
+    // current_page: parseInt(page, 10),
+    // total_pages: Math.ceil(totalCarts / pageSize),
+    // total: totalCarts,
   });
 }
 
@@ -208,7 +208,8 @@ export async function insertCart(req, res) {
 // }
 
 export async function checkoutCart(req, res) {
-  const { cart_id, total, note, payment, bankCode } = req.body;
+  const { cart_id, total, note, payment, bankCode, cart_item_ids } = req.body;
+
 
   try {
     const cart = await db.Cart.findByPk(cart_id, {
@@ -227,12 +228,16 @@ export async function checkoutCart(req, res) {
       });
     }
 
-    const finalTotal =
-      total ||
-      cart.cart_items.reduce(
-        (acc, item) => acc + item.quantity * item.product.price,
-        0
-      );
+    const selectedCartItems = cart.cart_items.filter(item => cart_item_ids.includes(item.id));
+
+    if (selectedCartItems.length === 0) {
+      return res.status(400).json({ message: "Vui lòng chọn ít nhất một sản phẩm để thanh toán" });
+    }
+
+    const finalTotal = total || selectedCartItems.reduce(
+      (acc, item) => acc + item.quantity * item.product.price,
+      0
+    );
 
     // Xử lý thanh toán tiền mặt
     if (payment === 1) {
@@ -249,7 +254,7 @@ export async function checkoutCart(req, res) {
           { transaction }
         );
 
-        for (let item of cart.cart_items) {
+        for (let item of selectedCartItems) {
           await db.OrderDetail.create(
             {
               order_id: newOrder.id,
@@ -261,8 +266,14 @@ export async function checkoutCart(req, res) {
           );
         }
 
-        await db.CartItem.destroy({ where: { cart_id } }, { transaction });
-        await cart.destroy({ transaction });
+        await db.CartItem.destroy({ where: { id: cart_item_ids } }, { transaction });
+        const remainingItems = cart.cart_items.filter(
+          item => !cart_item_ids.includes(item.id)
+        );
+
+        if (remainingItems.length === 0) {
+          await cart.destroy({ transaction });
+        }
         await transaction.commit();
 
         return res.status(201).json({
@@ -329,6 +340,7 @@ export async function checkoutCart(req, res) {
     });
   }
 }
+
 
 export async function deleteCart(req, res) {
   const { id } = req.params;

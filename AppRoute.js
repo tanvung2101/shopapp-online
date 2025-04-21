@@ -210,7 +210,7 @@ export function AppRoute(app) {
   );
 
   // Cart Router
-  router.get("/carts", asyncHandler(CartController.getCarts));
+  router.get("/carts",requireRoles([UserRole.ADMIN, UserRole.USER]), asyncHandler(CartController.getCarts));
   router.get(
     "/carts/:id",
     requireRoles([UserRole.ADMIN, UserRole.USER]),
@@ -253,7 +253,7 @@ export function AppRoute(app) {
   router.put(
     "/carts/:id",
     requireRoles([UserRole.USER]),
-    asyncHandler(CartItemController.updateCartItem)
+    asyncHandler(CartItemController.updateCartItems)
   );
   router.delete(
     "/cart-items/:id",

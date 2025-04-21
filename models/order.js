@@ -14,7 +14,7 @@ export default  (sequelize, DataTypes) => {
       Order.belongsTo(models.User, {
         foreignKey: "user_id",
       }),
-      Order.belongsTo(models.OrderDetail, {
+      Order.hasMany(models.OrderDetail, {
         foreignKey: "order_id",
         as: "order_details"
       });

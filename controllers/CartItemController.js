@@ -94,7 +94,7 @@ export async function insertCartItems(req, res) {
         message: "Mục trong giỏ hàng đã được xoá",
       });
     } else {
-      existingCartItem.quantity = quantity + existingCartItem.quantity;
+      existingCartItem.quantity = existingCartItem.quantity + quantity;
       await existingCartItem.save();
       return res.status(201).json({
         message: "Cập nhật số lượng trong giỏ hàng thành công",
@@ -126,12 +126,43 @@ export async function deleteCartItem(req, res) {
   });
 }
 
-export async function updateCartItem(req, res) {
-  const { id } = req.params;
-  const updated = await db.CartItem.update(req.body, { where: { id } });
-  return res.status(200).json({
-    message: updated
-      ? "Cập nhật sản phẩm trong giỏ hàng thành công"
-      : "Sản phẩm không tìm thấy",
+export async function updateCartItems(req, res) {
+  const { product_id, quantity, cart_id } = req.body;
+  const productExits = await db.Product.findByPk(product_id);
+  if (!productExits) {
+    return res.status(404).json({
+      message: "Sản phẩm không tồn tại",
+    });
+  }
+
+  // kiểm tra số lương
+  if (productExits.quantity < quantity) {
+    return res.status(400).json({
+      message: "Sản phẩm không đủ số lượng yêu cầu",
+    });
+  }
+
+  const cartExits = await db.Cart.findByPk(cart_id);
+  if (!cartExits) {
+    return res.status(404).json({
+      message: "Giỏ hàng không tồn tại",
+    });
+  }
+
+  // Tìm kiếm giỏ hàng có sẵn
+  const existingCartItem = await db.CartItem.findOne({
+    where: {
+      product_id,
+      cart_id,
+    },
   });
+
+  if (existingCartItem) {
+      existingCartItem.quantity = quantity;
+      await existingCartItem.save();
+      return res.status(201).json({
+        message: "Cập nhật số lượng trong giỏ hàng thành công",
+        data: existingCartItem,
+      });
+  }
 }

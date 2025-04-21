@@ -4,13 +4,13 @@ import db from "../models/index.js";
 
 export async function getProducts(req, res) {
   const {
-    search = "",
     page = 1,
     category,
     brand,
     sort_price,
     price_max,
     price_min,
+    name= '',
   } = req.query;
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
@@ -18,12 +18,12 @@ export async function getProducts(req, res) {
   let orderClause = [];
 
   // 🔍 Tìm kiếm theo tên, mô tả, thông số kỹ thuật
-  if (search.trim() !== "") {
+  if (name.trim() !== "") {
     whereClause = {
       [Op.or]: [
-        { name: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } },
-        { specification: { [Op.like]: `%${search}%` } },
+        { name: { [Op.like]: `%${name}%` } },
+        { description: { [Op.like]: `%${name}%` } },
+        { specification: { [Op.like]: `%${name}%` } },
       ],
     };
   }
