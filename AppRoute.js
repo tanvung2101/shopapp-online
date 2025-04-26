@@ -76,6 +76,11 @@ export function AppRoute(app) {
     UserController.restPassword
   );
 
+  router.get(
+    "/users/logout",
+    UserController.logout
+  );
+
   // Product Routes
   router.get("/products", asyncHandler(ProductController.getProducts));
   router.get("/products/:id", asyncHandler(ProductController.getProductById));
@@ -166,7 +171,7 @@ export function AppRoute(app) {
   );
 
   // Order Routes
-  router.get("/orders", asyncHandler(OrderController.getOrders));
+  router.get("/orders", requireRoles([UserRole.ADMIN, UserRole.USER]),asyncHandler(OrderController.getUserOrders));
   router.get("/orders/:id", asyncHandler(OrderController.getOrderById));
   // router.post(
   //   "/orders",
@@ -218,7 +223,7 @@ export function AppRoute(app) {
   );
   router.post(
     "/carts",
-    requireRoles([UserRole.ADMIN]),
+    requireRoles([UserRole.ADMIN, UserRole.USER]),
     validate(InsertCartRequest),
     asyncHandler(CartController.insertCart)
   );

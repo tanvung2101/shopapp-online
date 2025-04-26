@@ -70,6 +70,12 @@ export async function getUserOrders(req, res) {
           {
             model: db.OrderDetail,
             as: "order_details",
+            include: [
+              {
+                model: db.Product,
+                as: "product",
+              },
+            ],
           },
         ],
         order: [["created_at", "DESC"]],

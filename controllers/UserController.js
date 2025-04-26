@@ -71,9 +71,9 @@ export async function loginUser(req, res) {
   const { email, phone, password } = req.body;
   // console.log('email',email)
 
-  if (!email && !phone) {
+  if (!email ) {
     return res.status(400).json({
-      message: "Cần cung cấp email hoặc số điện thoại",
+      message: "Cần cung cấp email",
     });
   }
 
@@ -85,21 +85,21 @@ export async function loginUser(req, res) {
 
   let condition = {};
   if (email) condition.email = email;
-  if (phone) condition.phone = phone;
+  // if (phone) condition.phone = phone;
 
   const user = await db.User.findOne({ where: condition });
 
   // console.log("user",user)
   if (!user) {
-    return res.status(401).json({
-      message: "Tên hoặc mật khẩu không chính xác",
+    return res.status(400).json({
+      message: "Email chưa được đăng kí",
     });
   }
 
   const isPasswordValid = await argon2.verify(user.password, password);
   if (!isPasswordValid) {
     return res.status(401).json({
-      message: "Tên hoặc mật khẩu không chính xác",
+      message: "Mật khẩu không chính xác",
     });
   }
 
@@ -284,3 +284,10 @@ export async function restPassword(req, res) {
   // success
   res.send({ message: "ok",  user:new ResponseUser(user),});
 };
+
+export async function logout(req, res){
+  // clear cookie
+  res.clearCookie('refresh_token')
+  // success
+  res.send({ message: tranSuccess.logout_success })
+}

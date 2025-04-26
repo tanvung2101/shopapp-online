@@ -96,33 +96,27 @@ export async function getCartById(req, res) {
 }
 
 export async function insertCart(req, res) {
-  const { session_id, user_id } = req.body;
+  const { user_id } = req.body;
 
-  if ((session_id && user_id) || (!session_id && !user_id)) {
-    return res
-      .status(409)
-      .json({
-        message: "Chỉ được cung cấp một trong hai giá trị session và user_id",
+    if (!user_id) {
+      return res.status(400).json({
+        message: "Phải cung cấp user_id",
       });
-  }
+    }
 
-  // check if a cart with the same session_id already exits
-  const existingCart = await db.Cart.findOne({
-    where: {
-      [Op.or]: [
-        { session_id: session_id ? session_id : null },
-        { user_id: user_id ? user_id : null },
-      ],
-    },
-  });
+    const [cart, created] = await db.Cart.findOrCreate({
+      where: { user_id },
+      defaults: { user_id },
+    });
 
-  if (existingCart) {
-    return res.status(409).json({ message: "Giỏ hàng đã tồn tại" });
-  }
-  const cart = await db.Cart.create(req.body);
-  return res
-    .status(201)
-    .json({ message: "Tạo giỏ hàng thành công", data: cart });
+    if (!created) {
+      return res.status(409).json({ message: "Giỏ hàng đã tồn tại" });
+    }
+
+    return res.status(201).json({
+      message: "Tạo giỏ hàng thành công",
+      data: cart,
+    });
 }
 
 // export async function checkoutCart(req, res) {
