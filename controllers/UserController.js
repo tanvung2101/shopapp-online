@@ -289,5 +289,5 @@ export async function logout(req, res){
   // clear cookie
   res.clearCookie('refresh_token')
   // success
-  res.send({ message: tranSuccess.logout_success })
+  res.send({ message: "Đăng xuất thành công" })
 }
