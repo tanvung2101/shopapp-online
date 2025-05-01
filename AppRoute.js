@@ -255,6 +255,12 @@ export function AppRoute(app) {
     validate(InsertCartItemRequest),
     asyncHandler(CartItemController.insertCartItems)
   );
+  router.post(
+    "/cart-items/update",
+    requireRoles([UserRole.USER, UserRole.ADMIN]),
+    validate(InsertCartItemRequest),
+    asyncHandler(CartItemController.updateCartItem)
+  );
   router.put(
     "/carts/:id",
     requireRoles([UserRole.USER]),

@@ -98,26 +98,23 @@ export async function getCartById(req, res) {
 export async function insertCart(req, res) {
   const { user_id } = req.body;
 
-    if (!user_id) {
-      return res.status(400).json({
-        message: "Phải cung cấp user_id",
-      });
-    }
-
-    const [cart, created] = await db.Cart.findOrCreate({
-      where: { user_id },
-      defaults: { user_id },
+  if (!user_id) {
+    return res.status(400).json({
+      message: "Phải cung cấp user_id",
     });
+  }
 
-    if (!created) {
-      return res.status(409).json({ message: "Giỏ hàng đã tồn tại" });
-    }
+  const [cart, created] = await db.Cart.findOrCreate({
+    where: { user_id },
+    defaults: { user_id },
+  });
 
-    return res.status(201).json({
-      message: "Tạo giỏ hàng thành công",
-      data: cart,
-    });
+  return res.status(created ? 201 : 200).json({
+    message: created ? "Tạo giỏ hàng thành công" : "Giỏ hàng đã tồn tại",
+    data: cart,
+  });
 }
+
 
 // export async function checkoutCart(req, res) {
 //   const { cart_id, total, note } = req.body

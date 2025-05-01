@@ -35,7 +35,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 import './helpers/s3.js'
 
-import models from './models/index.js';
+import { AppRoute } from './AppRoute.js';
+import db from "./models/index.js";
 
 
 const app = express();
@@ -101,8 +102,6 @@ app.get("/health", async (req, res) => {
 });
 
 
-
-import { AppRoute } from './AppRoute.js';
 
 AppRoute(app)
 app.get("/", (req, res) => {
