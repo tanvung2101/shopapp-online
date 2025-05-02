@@ -83,23 +83,23 @@ app.use((req, res, next) => {
 });
 
 
-app.get("/health", async (req, res) => {
-  try {
-    await db.sequelize.authenticate(); // Kiểm tra kết nối database
-    res
-      .status(200)
-      .json({
-        server: "UP",
-        database: "UP",
-        timestamp: new Date().toISOString(),
-      });
-  } catch (error) {
-    console.error("Database connection error:", error);
-    res
-      .status(500)
-      .json({ server: "UP", database: "DOWN", error: error.message });
-  }
-});
+// app.get("/health", async (req, res) => {
+//   try {
+//     await db.sequelize.authenticate(); // Kiểm tra kết nối database
+//     res
+//       .status(200)
+//       .json({
+//         server: "UP",
+//         database: "UP",
+//         timestamp: new Date().toISOString(),
+//       });
+//   } catch (error) {
+//     console.error("Database connection error:", error);
+//     res
+//       .status(500)
+//       .json({ server: "UP", database: "DOWN", error: error.message });
+//   }
+// });
 
 
 
