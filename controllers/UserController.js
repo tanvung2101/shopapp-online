@@ -67,60 +67,91 @@ export async function registerUser(req, res) {
   }
 }
 
+// export async function loginUser(req, res) {
+//   const { email, password } = req.body;
+//   // console.log('email',email)
+
+//   if (!email ) {
+//     return res.status(400).json({
+//       message: "Cần cung cấp email",
+//     });
+//   }
+
+//   if (!password) {
+//     return res.status(400).json({
+//       message: "Bạn chưa nhập mật khẩu",
+//     });
+//   }
+
+//   let condition = {};
+//   if (email) condition.email = email;
+//   // if (phone) condition.phone = phone;
+
+//   const user = await db.User.findOne({ where: condition });
+
+//   // console.log("user",user)
+//   if (!user) {
+//     return res.status(400).json({
+//       message: "Email chưa được đăng kí",
+//     });
+//   }
+
+//   const isPasswordValid = await argon2.verify(user.password, password);
+//   if (!isPasswordValid) {
+//     return res.status(401).json({
+//       message: "Mật khẩu không chính xác",
+//     });
+//   }
+
+//   const { access_token, refresh_token } = await authToken(user.id);
+//   res.cookie("refresh_token", refresh_token, cookie);
+
+//   return res.status(200).json({
+//     message: "Đăng nhập thành công",
+//     data: new ResponseUser(user),
+//     access_token,
+//   });
+// }
+
 export async function loginUser(req, res) {
-  const { email, phone, password } = req.body;
-  // console.log('email',email)
+  try {
+    const { email, password } = req.body;
 
-  if (!email ) {
-    return res.status(400).json({
-      message: "Cần cung cấp email",
+    if (!email) {
+      return res.status(400).json({ message: "Cần cung cấp email" });
+    }
+
+    if (!password) {
+      return res.status(400).json({ message: "Bạn chưa nhập mật khẩu" });
+    }
+
+    const user = await db.User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ message: "Email chưa được đăng ký" });
+    }
+
+    const isPasswordValid = await argon2.verify(user.password, password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Mật khẩu không chính xác" });
+    }
+
+    const { access_token, refresh_token } = await authToken(user.id);
+
+
+    res.cookie("refresh_token", refresh_token, cookie);
+
+    return res.status(200).json({
+      message: "Đăng nhập thành công",
+      data: new ResponseUser(user),
+      access_token,
     });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({ message: "Lỗi máy chủ. Vui lòng thử lại sau." });
   }
-
-  if (!password) {
-    return res.status(400).json({
-      message: "Bạn chưa nhập mật khẩu",
-    });
-  }
-
-  let condition = {};
-  if (email) condition.email = email;
-  // if (phone) condition.phone = phone;
-
-  const user = await db.User.findOne({ where: condition });
-
-  // console.log("user",user)
-  if (!user) {
-    return res.status(400).json({
-      message: "Email chưa được đăng kí",
-    });
-  }
-
-  const isPasswordValid = await argon2.verify(user.password, password);
-  if (!isPasswordValid) {
-    return res.status(401).json({
-      message: "Mật khẩu không chính xác",
-    });
-  }
-
-  // const token = jwt.sign(
-  //   {
-  //     id: user.id,
-  //     // role: user.role,
-  //     iat: Math.floor(Date.now() / 1000)
-  //   },
-  //   process.env.JWT_SECRET,
-  //   { expiresIn: process.env.JWT_EXPIRATION }
-  // );
-  const { access_token, refresh_token } = await authToken(user.id);
-  res.cookie("refresh_token", refresh_token, cookie);
-
-  return res.status(200).json({
-    message: "Đăng nhập thành công",
-    data: new ResponseUser(user),
-    access_token,
-  });
 }
+
 
 export async function updateUser(req, res) {
   const { id } = req.params;
