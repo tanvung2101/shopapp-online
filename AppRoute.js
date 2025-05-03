@@ -46,11 +46,9 @@ export function AppRoute(app) {
     validate(InsertUserRequest),
     asyncHandler(UserController.registerUser)
   );
-  router.post(
-    "/users/login",
-    validate(LoginUserRequest),
-    asyncHandler(UserController.loginUser)
-  );
+
+
+  router.post('/users/login', validate(LoginUserRequest), asyncHandler(UserController.loginUser))
 
   router.put(
     "/users/:id",
