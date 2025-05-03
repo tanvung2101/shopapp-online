@@ -195,7 +195,7 @@ export async function updateUser(req, res) {
 
   return res.status(200).json({
     message: "Cập nhật người dùng thành công",
-    data: new ResponseUser(user),
+    data: user,
   });
 }
 
