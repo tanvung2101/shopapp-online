@@ -40,7 +40,6 @@ import db from "./models/index.js";
 
 
 const app = express();
-import cors from"cors";
 
 
 app.use(express.json())
@@ -68,7 +67,7 @@ app.use(cookieParser(process.env.JWT_REFRESH_SECRET));
 
 // Middleware xử lý CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://shopapp-online.vercel.app");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
