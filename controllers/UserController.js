@@ -136,10 +136,13 @@ export async function loginUser(req, res) {
       return res.status(401).json({ message: "Mật khẩu không chính xác" });
     }
 
+    console.log('user', user)
+
     const { access_token, refresh_token } = await authToken(user.id);
 
-
+    console.log('access_token', access_token,refresh_token)
     res.cookie("refresh_token", refresh_token, cookie);
+
 
     return res.status(200).json({
       message: "Đăng nhập thành công",
