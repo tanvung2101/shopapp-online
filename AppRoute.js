@@ -52,7 +52,7 @@ export function AppRoute(app) {
 
   router.put(
     "/users/:id",
-    requireRoles([UserRole.ADMIN]),
+    requireRoles([UserRole.ADMIN, UserRole.USER]),
     asyncHandler(UserController.updateUser)
   );
 
