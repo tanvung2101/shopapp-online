@@ -377,7 +377,7 @@ export function AppRoute(app) {
   router.post(
     "/images/google/upload",
     requireRoles([UserRole.ADMIN, UserRole.USER]),
-    uploadGoogleImageMiddleware.single("image"),
+    uploadGoogleImageMiddleware.array("image", 5),
     asyncHandler(ImageController.uploadImagesToGoogleStorage)
   );
   router.get(
