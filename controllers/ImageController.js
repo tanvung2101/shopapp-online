@@ -41,22 +41,30 @@ export async function uploadImagesS3(req, res) {
 }
 
 export async function uploadImagesToGoogleStorage(req, res) {
-  // Kiểm tra nếu không có file nào được tải lên
-  if (!req.file) {
+  if (!req.files || req.files.length === 0) {
     throw new Error("Không có file nào được tải lên");
   }
-    const newFileName = `${Date.now()}-${req.file.originalname}`;
-  const storageRef = ref(storage, `images/${newFileName}`);
-  // Upload the file and metadata
-  const snapshot = uploadBytesResumable(storageRef, req.file.buffer, {
-    contentType: req.file.mimetype,
-  });
-  const downloadUrl = await getDownloadURL((await snapshot).ref);
+
+  const uploadedUrls = [];
+
+  for (const file of req.files) {
+    const newFileName = `${Date.now()}-${file.originalname}`;
+    const storageRef = ref(storage, `images/${newFileName}`);
+
+    const snapshot = await uploadBytesResumable(storageRef, file.buffer, {
+      contentType: file.mimetype,
+    });
+
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    uploadedUrls.push(downloadUrl.trim());
+  }
+
   res.status(201).json({
     message: "Tải file ảnh thành công",
-    file: downloadUrl.trim(),
+    files: uploadedUrls,
   });
 }
+
 
 async function checkImageInUser(imageUrl) {
   const models = [
