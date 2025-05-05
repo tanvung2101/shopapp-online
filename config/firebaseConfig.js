@@ -1,13 +1,9 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+// helpers/firebase.js
+import { initializeApp, getApps } from "firebase/app";
+import { getStorage } from "firebase/storage";
 import dotenv from 'dotenv';
 
 dotenv.config();
-// import {getAnalytics} from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -18,6 +14,11 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-export const firebaseApp = initializeApp(firebaseConfig);
-// export const analytics = getAnalytics(firebaseApp)
+// Kiểm tra xem đã khởi tạo Firebase chưa (tránh lỗi khi reload nhiều lần)
+const firebaseApp =
+  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+// ✅ Export getStorage instance để dùng upload, delete, get URL
+const storage = getStorage(firebaseApp);
+
+export { firebaseApp, storage };

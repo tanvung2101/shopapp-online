@@ -3,13 +3,14 @@ import path from "path";
 import {
   deleteObject,
   getDownloadURL,
-  getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
 import db from "../models/index.js";
 import {DeleteObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s3";
 import { s3 } from "../helpers/s3.js";
+import { storage } from "../config/firebaseConfig.js";
+
 
 export async function uploadImages(req, res) {
   console.log(req.files)
@@ -44,8 +45,7 @@ export async function uploadImagesToGoogleStorage(req, res) {
   if (!req.file) {
     throw new Error("Không có file nào được tải lên");
   }
-  const storage = getStorage();
-  const newFileName = `${Date.now()}-${req.file.originalname}`;
+    const newFileName = `${Date.now()}-${req.file.originalname}`;
   const storageRef = ref(storage, `images/${newFileName}`);
   // Upload the file and metadata
   const snapshot = uploadBytesResumable(storageRef, req.file.buffer, {
@@ -84,7 +84,6 @@ export async function deleteImage(req, res) {
       return res.status(500).json({ message: "Ảnh vẫn đang được sử dụng trong cơ sở dữ liệu " });
     }
     if (url.includes("https://firebasestorage.googleapis.com/")) {
-      const storage = getStorage();
       const fileRef = ref(storage, url);
 
       // xoá ảnh trong firebase
