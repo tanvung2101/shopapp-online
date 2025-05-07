@@ -2,96 +2,91 @@ import {  Op} from "sequelize";
 import { getAvatarUrl } from "../helpers/imageHelper.js";
 import db from "../models/index.js";
 
-export async function getProducts(req, res) {
-  const {
-    page = 1,
-    category,
-    brand,
-    sort_price,
-    price_max,
-    price_min,
-    name= '',
-  } = req.query;
-  const pageSize = 10;
-  const offset = (page - 1) * pageSize;
-  let whereClause = {};
-  let orderClause = [];
 
-  // 🔍 Tìm kiếm theo tên, mô tả, thông số kỹ thuật
-  if (name.trim() !== "") {
-    whereClause = {
-      [Op.or]: [
+
+export async function getProducts(req, res) {
+
+    const {
+      page = 1,
+      category,
+      brand,
+      sort_price,
+      price_max,
+      price_min,
+      name = '',
+     sort_by,
+      rating_filter,
+    } = req.query;
+
+    const pageSize = 10;
+    const offset = (page - 1) * pageSize;
+
+    const whereClause = {};
+    const orderClause = [];
+
+    // 🔍 Tìm kiếm theo tên, mô tả, thông số kỹ thuật
+    if (name.trim() !== "") {
+      whereClause[Op.or] = [
         { name: { [Op.like]: `%${name}%` } },
         { description: { [Op.like]: `%${name}%` } },
         { specification: { [Op.like]: `%${name}%` } },
-      ],
-    };
-  }
-
-  // 🔥 Lọc theo `category` (trên URL) -> `category_id` (trong database)
-  if (category) {
-    whereClause.category_id = category; // Giữ nguyên giá trị từ URL
-  }
-
-  // 🔥 Lọc theo `brand` (trên URL) -> `brand_id` (trong database)
-  if (brand) {
-    whereClause.brand_id = brand; // Giữ nguyên giá trị từ URL
-  }
-
-  const minPrice = price_min && !isNaN(price_min) ? Number(price_min) : null;
-  const maxPrice = price_max && !isNaN(price_max) ? Number(price_max) : null;
-
-  if (minPrice !== null || maxPrice !== null) {
-    whereClause.price = {};
-    if (minPrice !== null) {
-      whereClause.price[Op.gte] = minPrice;
+      ];
     }
-    if (maxPrice !== null) {
-      whereClause.price[Op.lte] = maxPrice;
+
+    // 🔍 Lọc theo brand/category
+    if (category) whereClause.category_id = category;
+    if (brand) whereClause.brand_id = brand;
+
+    // 🔍 Lọc theo khoảng giá
+    if (price_min !== undefined || price_max !== undefined) {
+      whereClause.price = {};
+      if (price_min !== undefined) whereClause.price[Op.gte] = price_min;
+      if (price_max !== undefined) whereClause.price[Op.lte] = price_max;
     }
-  }
 
-  // 🔥 Sắp xếp theo giá
-  if (sort_price === "asc") {
-    orderClause.push(["price", "ASC"]);
-  } else if (sort_price === "desc") {
-    orderClause.push(["price", "DESC"]);
-  }
-  // console.log("whereClause", whereClause);
+    // 🔍 Lọc theo đánh giá
+    if (rating_filter !== undefined) {
+      whereClause.rating = { [Op.gte]: Number(rating_filter) };
+    }
 
-  const [products, totalProducts] = await Promise.all([
-    db.Product.findAll({
-      where: whereClause,
-      include: [
-        {
-          model: db.Category,
-          as: "Category",
-        },
-        {
-          model: db.Brand, // 🔥 Thêm bảng Brand để lấy thông tin thương hiệu
-          as: "Brand",
-        },
-      ],
-      limit: pageSize,
-      offset: offset,
-      order: orderClause,
-    }),
-    db.Product.count({
-      where: whereClause,
-    }),
-  ]);
+    // 🔃 Sắp xếp theo giá
+    if (sort_price === "asc") {
+      orderClause.push(["price", "ASC"]);
+    } else if (sort_price === "desc") {
+      orderClause.push(["price", "DESC"]);
+    }
 
-  return res.status(200).json({
-    message: "Lấy danh sách sản phẩm thành công",
-    data: products.map((product) => ({
-      ...product.get({ plain: true }),
-      image: getAvatarUrl(product.image),
-    })),
-    current_page: parseInt(page, 10),
-    total_pages: Math.ceil(totalProducts / pageSize),
-    total: totalProducts,
-  });
+
+    if (["views", "created_at", "total_sold"].includes(sort_by)) {
+      orderClause.push([sort_by, "DESC"]);
+    }
+
+    const [products, totalProducts] = await Promise.all([
+      db.Product.findAll({
+        where: whereClause,
+        include: [
+          { model: db.Category, as: "Category" },
+          { model: db.Brand, as: "Brand" },
+        ],
+        limit: pageSize,
+        offset: offset,
+        order: orderClause,
+      }),
+      db.Product.count({ where: whereClause }),
+    ]);
+
+    return res.status(200).json({
+      message: "Lấy danh sách sản phẩm thành công",
+      data: products.map((product) => ({
+        ...product.get({ plain: true }),
+        image: getAvatarUrl(product.image),
+      })),
+      current_page: parseInt(page, 10),
+      total_pages: Math.ceil(totalProducts / pageSize),
+      total: totalProducts,
+    });
 }
+
 
 export async function getProductById(req, res) {
   const { id } = req.params;
