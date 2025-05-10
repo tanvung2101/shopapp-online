@@ -15,7 +15,7 @@ const cookie = {
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30days=refreshExpiration
   httpOnly: true,
   sameSite: true,
-  signed: true,
+  sameSite: 'None',
   secure: true,
 };
 
