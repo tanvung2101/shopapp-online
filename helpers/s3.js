@@ -1,14 +1,15 @@
-import { S3 } from "@aws-sdk/client-s3";
-import multer from "multer";
-import multerS3 from "multer-s3";
-import path from "path";
-import dotenv from 'dotenv'
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-dotenv.config()
+// helpers/s3.js
+const { S3 } = require("@aws-sdk/client-s3");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// CommonJS có sẵn __dirname và __filename
+// nếu muốn đường dẫn đến file hiện tại
+// const __filename = __filename;
+// const __dirname = __dirname;
 
 const s3 = new S3({
   region: process.env.AWS_REGION,
@@ -18,7 +19,7 @@ const s3 = new S3({
   },
 });
 
-// s3.listBuckets({}).then((data) => console.log(data))
+// s3.listBuckets().then(data => console.log(data));
 
 const ImageUploadS3 = multer({
   storage: multerS3({
@@ -30,7 +31,7 @@ const ImageUploadS3 = multer({
       cb(null, fileName);
     },
   }),
-  limits: { fileSize: 1024 * 1024 * 1 }, // Giới hạn 5MB
+  limits: { fileSize: 1024 * 1024 * 1 }, // Giới hạn 1MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
@@ -40,6 +41,8 @@ const ImageUploadS3 = multer({
   },
 });
 
-export { s3 };
-
-export default ImageUploadS3;
+// CommonJS export
+module.exports = {
+  s3,
+  default: ImageUploadS3,
+};
