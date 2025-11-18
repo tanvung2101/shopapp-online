@@ -1,23 +1,25 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default {
-    apps: [
-      {
-        name: 'shopapp-online',
-        script: 'index.js', // ✅ nếu index.js nằm ở thư mục gốc
-        env: {
-          AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
-          AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
-          BUCKET_NAME: process.env.BUCKET_NAME,
-          CLIENT_URL: process.env.CLIENT_URL,
-          AWS_REGION: process.env.AWS_REGION,
-          SES_FROM_ADDRESS: process.env.SES_FROM_ADDRESS,
-          PORT: 5000,
-          NODE_ENV: process.env.NODE_ENV
-        }
-      }
-    ]
-  }
-  
+  apps: [
+    {
+      name: 'shopapp-online',
+      script: './dist/index.js', // file entry
+      watch: false,
+      env: {
+        NODE_ENV: 'development',
+        DB_DEV_USERNAME: process.env.DB_DEV_USERNAME,
+        DB_DEV_PASSWORD: process.env.DB_DEV_PASSWORD,
+        DB_DEV_DATABASE: process.env.DB_DEV_DATABASE,
+        DB_DEV_HOST: process.env.DB_DEV_HOST,
+        DB_DEV_PORT: process.env.DB_DEV_PORT,
+        DB_DEV_DIALECT: process.env.DB_DEV_DIALECT,
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        DATABASE_URL: process.env.DATABASE_URL,
+      },
+    },
+  ],
+};
