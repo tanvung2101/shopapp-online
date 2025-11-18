@@ -37,9 +37,18 @@ import './helpers/s3.js'
 
 import { AppRoute } from './AppRoute.js';
 import db from "./models/index.js";
+import { rateLimit } from 'express-rate-limit'
 
 
 const app = express();
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+	// store: ... , // Redis, Memcached, etc. See below.
+})
+app.use(limiter)
 
 
 app.use(express.json())
@@ -67,8 +76,8 @@ app.use(cookieParser(process.env.JWT_REFRESH_SECRET));
 
 // Middleware xử lý CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://shopapp-online.vercel.app");
-  // res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  // res.header("Access-Control-Allow-Origin", "https://shopapp-online.vercel.app");
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
@@ -103,12 +112,7 @@ app.get("/health", async (req, res) => {
   }
 });
 
-
-
 AppRoute(app)
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
 
 const port = process?.env?.PORT || 5000
 app.listen(port, () => {
@@ -118,4 +122,4 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-// 647
+// video7 1608 

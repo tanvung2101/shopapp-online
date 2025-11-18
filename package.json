@@ -5,7 +5,7 @@
   "engines": {
     "node": "22.x"
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon --inspect --exec babel-node ./index.js",
     "build": "babel ./ -d dist --ignore node_modules,dist",
@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "firebase": "^11.3.1",
     "http-errors": "^2.0.0",
     "joi": "^17.13.3",
