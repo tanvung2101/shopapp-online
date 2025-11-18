@@ -5,14 +5,14 @@ dotenv.config();
 
 export default {
   development: {
-    username: process.env.DB_DEV_USERNAME,
-    password: process.env.DB_DEV_PASSWORD, // Use null if the environment variable is empty
-    database: process.env.DB_DEV_DATABASE,
-    port: parseInt(process.env.DB_DEV_PORT, 10),
-    host: process.env.DB_DEV_HOST,
-    dialect: process.env.DB_DEV_DIALECT,
-    use_env_variable: "DATABASE_URL",
-  },
+  username: process.env.DB_DEV_USERNAME,
+  password: process.env.DB_DEV_PASSWORD,
+  database: process.env.DB_DEV_DATABASE,
+  port: parseInt(process.env.DB_DEV_PORT, 10),
+  host: process.env.DB_DEV_HOST,
+  dialect: process.env.DB_DEV_DIALECT,
+  // use_env_variable: "DATABASE_URL", ← remove this line
+},
   test: {
     username: "root",
     password: null,
