@@ -4,7 +4,7 @@ module.exports = {
   apps: [
     {
       name: 'shopapp-online',
-      script: './dist/main.js',
+      script: './dist/index.js',
       watch: false,
       env: {
         NODE_ENV: 'development',
