@@ -30,10 +30,10 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes
-    );
+    const modelModule = require(path.join(__dirname, file));
+    // Nếu là export default, lấy model.default, nếu không thì lấy model trực tiếp
+    const modelFn = modelModule.default || modelModule;
+    const model = modelFn(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 

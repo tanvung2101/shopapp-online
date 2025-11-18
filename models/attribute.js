@@ -1,31 +1,19 @@
-"use strict";
-import { Model } from"sequelize";
-export default (sequelize, DataTypes) => {
-  class Attribute extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      Attribute.hasMany(models.ProductAttributeValue, {
-        foreignKey: "attribute_id",
-      });
-    }
-  }
-  Attribute.init(
-    {
-      name: DataTypes.STRING,
-    },
-    {
-      sequelize,
-      modelName: "Attribute",
-      tableName: "attributes",
-      timestamps: true,
-      underscored: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-    }
-  );
+'use strict';
+
+module.exports = (sequelize, DataTypes) => {
+  const Attribute = sequelize.define('Attribute', {
+    name: DataTypes.STRING
+  }, {
+    tableName: 'attributes',
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  });
+
+  Attribute.associate = function(models) {
+    Attribute.hasMany(models.ProductAttributeValue, { foreignKey: 'attribute_id' });
+  };
+
   return Attribute;
 };
