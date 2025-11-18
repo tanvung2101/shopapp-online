@@ -1,11 +1,10 @@
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 
-export default {
+module.exports = {
   apps: [
     {
       name: 'shopapp-online',
-      script: './dist/index.js', // file entry
+      script: './dist/main.js',
       watch: false,
       env: {
         NODE_ENV: 'development',
@@ -18,7 +17,13 @@ export default {
       },
       env_production: {
         NODE_ENV: 'production',
-        DATABASE_URL: process.env.DATABASE_URL,
+        DATABASE_URL: process.env.DATABASE_URL, // nếu bạn dùng PostgreSQL trên Render/Railway
+        DB_PROD_USERNAME: process.env.DB_PROD_USERNAME,
+        DB_PROD_PASSWORD: process.env.DB_PROD_PASSWORD,
+        DB_PROD_DATABASE: process.env.DB_PROD_DATABASE,
+        DB_PROD_HOST: process.env.DB_PROD_HOST,
+        DB_PROD_PORT: process.env.DB_PROD_PORT,
+        DB_PROD_DIALECT: process.env.DB_PROD_DIALECT,
       },
     },
   ],
