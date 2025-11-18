@@ -1,19 +1,15 @@
 'use strict';
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const process = require('process');
+const configAll = require('../config/config.js');
 
-import fs from 'fs';
-import path from 'path';
-import Sequelize from 'sequelize';
-import process from 'process';
-import configAll from '../config/config.js';
-import { fileURLToPath } from 'url';
-
-const env = process.env.NODE_ENV || "development";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
 const config = configAll[env];
 
 const db = {};
+const basename = path.basename(__filename);
 
 let sequelize;
 if (config.use_env_variable) {
@@ -23,20 +19,14 @@ if (config.use_env_variable) {
 }
 
 // Load models dynamically
-const files = fs.readdirSync(__dirname).filter(file => {
-  return (
-    file.indexOf('.') !== 0 &&
-    file !== basename &&
-    file.slice(-3) === '.js' &&
-    !file.endsWith('.test.js')
-  );
-});
-
-for (const file of files) {
-  const modelModule = await import(path.join(__dirname, file));
-  const model = modelModule.default(sequelize, Sequelize.DataTypes);
-  db[model.name] = model;
-}
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js';
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
@@ -46,13 +36,5 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-// sequelize.authenticate()
-//   .then(() => {
-//     console.log('Connection has been established successfully.');
-//     return sequelize.sync({ alter: true });
-//   })
-//   .then(() => console.log("Tables updated"))
-//   .catch(err => console.error('Unable to connect to the database:', err));
 
-
-export default db;
+module.exports = db;
