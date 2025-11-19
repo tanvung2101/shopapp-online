@@ -1,22 +1,29 @@
 // models/attribute.js
+import { Model } from "sequelize";
+
 export default (sequelize, DataTypes) => {
-  const Attribute = sequelize.define(
-    "Attribute",
+  class Attribute extends Model {
+    static associate(models) {
+      Attribute.hasMany(models.ProductAttributeValue, {
+        foreignKey: "attribute_id",
+      });
+    }
+  }
+
+  Attribute.init(
     {
       name: DataTypes.STRING,
     },
     {
+      sequelize,
+      modelName: "Attribute",
       tableName: "attributes",
-      underscored: true,
       timestamps: true,
+      underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
   );
-
-  Attribute.associate = (models) => {
-    Attribute.hasMany(models.ProductAttributeValue, { foreignKey: "attribute_id" });
-  };
 
   return Attribute;
 };
