@@ -1,6 +1,5 @@
-"use strict";
-
-module.exports = (sequelize, DataTypes) => {
+// models/product.js
+export default (sequelize, DataTypes) => {
   const Product = sequelize.define(
     "Product",
     {
@@ -48,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Product.associate = models => {
+  Product.associate = (models) => {
     Product.belongsTo(models.Brand, { foreignKey: "brand_id" });
     Product.belongsTo(models.Category, { foreignKey: "category_id" });
     Product.hasMany(models.CartItem, { foreignKey: "product_id" });

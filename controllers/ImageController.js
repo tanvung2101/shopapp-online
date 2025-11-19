@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 import db from "../models/index.js";
 import {DeleteObjectCommand, ListObjectVersionsCommand } from "@aws-sdk/client-s3";
-import { s3 } from "../helpers/s3.js";
+import {s3 } from "../helpers/s3.js";
 import { storage } from "../config/firebaseConfig.js";
 
 

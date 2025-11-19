@@ -1,15 +1,9 @@
-// helpers/s3.js
-const { S3 } = require("@aws-sdk/client-s3");
-const multer = require("multer");
-const multerS3 = require("multer-s3");
-const path = require("path");
-const dotenv = require("dotenv");
+import { S3 } from "@aws-sdk/client-s3";
+import multer from "multer";
+import multerS3 from "multer-s3";
+import path from "path";
+import dotenv from "dotenv";
 dotenv.config();
-
-// CommonJS có sẵn __dirname và __filename
-// nếu muốn đường dẫn đến file hiện tại
-// const __filename = __filename;
-// const __dirname = __dirname;
 
 const s3 = new S3({
   region: process.env.AWS_REGION,
@@ -19,30 +13,21 @@ const s3 = new S3({
   },
 });
 
-// s3.listBuckets().then(data => console.log(data));
-
-const ImageUploadS3 = multer({
+export const ImageUploadS3 = multer({
   storage: multerS3({
     s3,
     bucket: process.env.BUCKET_NAME,
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    key: function (req, file, cb) {
+    key: (req, file, cb) => {
       const fileName = `uploads/${Date.now()}-${file.originalname}`;
       cb(null, fileName);
     },
   }),
-  limits: { fileSize: 1024 * 1024 * 1 }, // Giới hạn 1MB
+  limits: { fileSize: 1024 * 1024 * 1 },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Chỉ được phép tải lên file ảnh"), false);
-    }
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Only image files are allowed"), false);
   },
 });
 
-// CommonJS export
-module.exports = {
-  s3,
-  default: ImageUploadS3,
-};
+export { s3 }; // ✔ Export chuẩn ESM

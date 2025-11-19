@@ -97,6 +97,7 @@ app.use((req, res, next) => {
 app.get("/health", async (req, res) => {
   try {
     await db.sequelize.authenticate(); // Kiểm tra kết nối database
+    console.log('hello')
     res
       .status(200)
       .json({

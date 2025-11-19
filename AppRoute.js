@@ -37,7 +37,7 @@ import UpdateOrderRequest from "./dtos/requests/order/UpdateOrderRequest.js";
 import { requireRoles } from "./middlewares/jwtMiddlewares.js";
 import { UserRole } from "./constants/index.js";
 import { verifyForgotPasswordToken } from "./helpers/jwt.js";
-import ImageUploadS3 from "./helpers/s3.js"
+import {ImageUploadS3} from "./helpers/s3.js"
 
 export function AppRoute(app) {
   // Users Routes
