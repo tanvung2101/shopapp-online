@@ -1,13 +1,11 @@
-// ecosystem.config.js
-import 'dotenv/config';
+require('dotenv').config();
 
-export default {
+module.exports = {
   apps: [
     {
       name: 'shopapp-online',
-      script: './dist/index.js',
+      script: './dist/index.js', // file đã build
       interpreter: 'node',
-      node_args: '--experimental-specifier-resolution=node',
       watch: false,
       env: {
         NODE_ENV: 'development',
