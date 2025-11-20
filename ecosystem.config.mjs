@@ -1,17 +1,16 @@
-import 'dotenv/config';
-
 export default {
   apps: [
     {
-      name: 'shopapp-online',
-      script: './dist/index.js', // file đã build
-      interpreter: 'node',
+      name: "shopapp-online",
+      script: "./dist/index.js",
+      exec_mode: "fork",
+      interpreter: "node",
       watch: false,
       env: {
-        NODE_ENV: 'development',
+        NODE_ENV: "development",
       },
       env_production: {
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
       },
     },
   ],
