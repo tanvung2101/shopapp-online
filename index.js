@@ -29,10 +29,9 @@ alter table shopapp_online.users
 add column password_changed_at datetime null;
  */
 
+import './config/dotenv.js';
 import cookieParser from "cookie-parser";
 import express from 'express'
-import dotenv from 'dotenv'
-dotenv.config()
 import './helpers/s3.js'
 
 import { AppRoute } from './AppRoute.js';
