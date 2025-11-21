@@ -70,6 +70,6 @@ jobs:
 
     - name: Restart app with PM2
       run: |
-        pm2 describe shopapp-online || pm2 start ecosystem.config.mjs
+        pm2 describe shopapp-online || pm2 start index.js --name my-app
         pm2 restart shopapp-online
     
