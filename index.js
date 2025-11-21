@@ -92,6 +92,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/", (req, res) => {
+  res.send("ShopApp Online is running");
+});
+
 
 app.get("/health", async (req, res) => {
   try {
