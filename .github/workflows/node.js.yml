@@ -33,12 +33,12 @@ jobs:
       run: |
         echo "PORT=${{ secrets.PORT }}" >> .env
         echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-        echo "DB_DEV_USERNAME=${{ secrets.DB_DEV_USERNAME }}" >> .env
-        echo "DB_DEV_PASSWORD=${{ secrets.DB_DEV_PASSWORD }}" >> .env
-        echo "DB_DEV_DATABASE=${{ secrets.DB_DEV_DATABASE }}" >> .env
-        echo "DB_DEV_HOST=${{ secrets.DB_DEV_HOST }}" >> .env
-        echo "DB_DEV_DIALECT=${{ secrets.DB_DEV_DIALECT }}" >> .env
-        echo "DB_DEV_PORT=${{ secrets.DB_DEV_PORT }}" >> .env
+        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DB_DIALECT=${{ secrets.DB_DIALECT }}" >> .env
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
         echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
 
         echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> .env
