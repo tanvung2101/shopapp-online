@@ -7,7 +7,8 @@
   },
   "type": "module",
   "scripts": {
-    "start": "nodemon --inspect --exec babel-node ./index.js",
+    "dev": "nodemon --inspect --exec babel-node ./index.js",
+    "start": "node ./index.js",
     "build": "babel ./ -d dist --ignore node_modules,dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
