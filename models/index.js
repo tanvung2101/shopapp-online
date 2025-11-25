@@ -7,15 +7,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename);
 const basename = path.basename(__filename);
 
 // ✅ Sequelize config chuẩn Railway
 const sequelize = new Sequelize(
-  process.env.DB_DATABASE,           // tên database
-  process.env.DB_USERNAME,           // username
-  process.env.DB_PASSWORD,           // password
+  process.env.DB_DATABASE,           
+  process.env.DB_USERNAME,           
+  process.env.DB_PASSWORD,           
   {
     host: process.env.DB_HOST || "hopper.proxy.rlwy.net",  // public host Railway
     port: Number(process.env.DB_PORT) || 21534,            // port Railway
