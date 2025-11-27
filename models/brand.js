@@ -22,7 +22,7 @@ export default  (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Brand",
-      tableName: "Brands",
+      tableName: "brands",
       timestamps: true,
       underscored: true,
       createdAt: "created_at",

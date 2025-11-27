@@ -1,6 +1,6 @@
 'use strict';
-import { Model } from"sequelize";
-export default  (sequelize, DataTypes) => {
+import { Model } from "sequelize";
+export default (sequelize, DataTypes) => {
   class User extends Model {
     /**
      * Helper method for defining associations.
@@ -37,12 +37,14 @@ export default  (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "User",
-      tableName: "Users",
+      tableName: "users",
       timestamps: true,
       underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
+      freezeTableName: true
     }
+
   );
   return User;
 };

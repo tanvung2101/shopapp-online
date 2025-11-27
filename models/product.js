@@ -39,7 +39,7 @@ export default (sequelize, DataTypes) => {
       category_id: DataTypes.INTEGER,
     },
     {
-      tableName: "Products",
+      tableName: "products",
       timestamps: true,
       underscored: true,
       createdAt: "created_at",
