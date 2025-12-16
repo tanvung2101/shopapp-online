@@ -2,6 +2,7 @@
 
 A full-featured **online shopping web application** built with modern technologies — including **Node.js**, **Express**, **React (optional)**, **MySQL/MongoDB**, and **REST API** — designed for learning and real-world use.
 
+**🔥 Live Demo:** [https://shopapp-online.site/](https://shopapp-online.site/)
 ---
 
 ## 📌 Features
@@ -51,4 +52,9 @@ Make sure you have installed:
 git clone https://github.com/tanvung2101/shopapp-online.git
 cd shopapp-online
 ﻿# shopapp-online
+npm install
+# or
+yarn install
+
+
 
